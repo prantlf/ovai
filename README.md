@@ -22,7 +22,7 @@ Download Make sure that you have installed [Go] 1.22 or newer.
 1. Download an archive with the executable for your hardware and operating system from [GitHub Releases].
 2. Download a JSON file with your Google account key from Google Project Console and save it to the current directory under the name `google-account.json`.
 3. Optionally create a file `model-defaults.json` in the current directory to change the [default model parameters].
-3. Run the server:
+4. Run the server:
 
 ```
 ❯ ovai

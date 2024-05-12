@@ -17,7 +17,7 @@ type harCreator struct {
 	Version string `json:"version"`
 }
 
-type harInitiaor struct {
+type harInitiator struct {
 	Type string `json:"type"`
 }
 
@@ -81,18 +81,18 @@ type harTimings struct {
 }
 
 type harEntry struct {
-	Initiator       harInitiaor `json:"_initiator"`
-	Priority        string      `json:"_priority"`
-	ResourceType    string      `json:"_resourceType"`
-	Cache           harCache    `json:"cache"`
-	Connection      string      `json:"connection"`
-	PageRef         string      `json:"pageref"`
-	Request         harRequest  `json:"request"`
-	Response        harResponse `json:"response"`
-	ServerIPAddress string      `json:"serverIPAddress"`
-	StartedDateTime string      `json:"startedDateTime"`
-	Time            float64     `json:"time"`
-	Timings         harTimings  `json:"timings"`
+	Initiator       harInitiator `json:"_initiator"`
+	Priority        string       `json:"_priority"`
+	ResourceType    string       `json:"_resourceType"`
+	Cache           harCache     `json:"cache"`
+	Connection      string       `json:"connection"`
+	PageRef         string       `json:"pageref"`
+	Request         harRequest   `json:"request"`
+	Response        harResponse  `json:"response"`
+	ServerIPAddress string       `json:"serverIPAddress"`
+	StartedDateTime string       `json:"startedDateTime"`
+	Time            float64      `json:"time"`
+	Timings         harTimings   `json:"timings"`
 }
 
 type harLog struct {

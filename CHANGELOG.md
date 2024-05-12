@@ -1,5 +1,11 @@
 # Changes
 
+## [0.1.4](https://github.com/prantlf/ovai/compare/v0.1.3...v0.1.4) (2024-05-12)
+
+### Bug Fixes
+
+* Fix automated publishing ([b17448e](https://github.com/prantlf/ovai/commit/b17448e604fe3288c8ac5ecea9c16dd254128851))
+
 ## [0.1.3](https://github.com/prantlf/ovai/compare/v0.1.2...v0.1.3) (2024-05-12)
 
 ### Bug Fixes

@@ -14,9 +14,7 @@ func TestEncodePart(t *testing.T) {
 	out, err := encodePart(&testPart{
 		Test: "test",
 	})
-	if err != nil {
-		t.Fatal(err)
-	}
+	test.Nil(t, err)
 	test.Equal(t, "eyJ0ZXN0IjoidGVzdCJ9", out)
 }
 

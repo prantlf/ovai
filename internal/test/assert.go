@@ -25,6 +25,12 @@ func location() string {
 	return ""
 }
 
+func Nil(t *testing.T, value any) {
+	if value != nil {
+		t.Errorf("%snot nil\nvalue: %v", location(), value)
+	}
+}
+
 func Equal(t *testing.T, expected any, actual any) {
 	if expected != actual {
 		t.Errorf("%snot equal\nexpected: %v\nactual: %v", location(), expected, actual)

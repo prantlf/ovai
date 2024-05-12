@@ -1,0 +1,14 @@
+{
+  "geminiDefaults": {
+    "generationConfig": {
+      "maxOutputTokens": 1024,
+      "temperature": 0.5
+    }
+  },
+  "bisonDefaults": {
+    "parameters": {
+      "maxOutputTokens": 1024,
+      "temperature": 0.5
+    }
+  }
+}

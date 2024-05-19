@@ -74,11 +74,12 @@ func CreatePostRequest(url string, input interface{}) (*http.Request, error) {
 	}
 	reader, writer := io.Pipe()
 	go func() {
-		err := json.NewEncoder(writer).Encode(input)
-		if err != nil {
+		if err := json.NewEncoder(writer).Encode(input); err != nil {
 			log.Dbg("! encoding request body failed: %v", err)
 		}
-		writer.Close()
+		if err := writer.Close(); err != nil {
+			log.Dbg("! closing writer to request pipe failed: %v", err)
+		}
 	}()
 
 	req, err := http.NewRequest("POST", url, reader)
@@ -98,7 +99,9 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 		log.Dbg("making request failed: %v", err)
 		return http.StatusInternalServerError, errors.New("making request failed")
 	}
-	defer res.Body.Close()
+	if err := res.Body.Close(); err != nil {
+		log.Dbg("closing request body stream failed: %v", err)
+	}
 
 	if res.StatusCode != http.StatusOK {
 		msg := readError(req, res)
@@ -118,8 +121,7 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 		log.Dbg("reading response body failed: %v", err)
 		return http.StatusInternalServerError, errors.New("reading response body failed")
 	}
-	err = json.Unmarshal(resBody, output)
-	if err != nil {
+	if err = json.Unmarshal(resBody, output); err != nil {
 		log.Dbg("receive %d: %s %s\n with response %s", res.StatusCode, req.Method, req.URL, resBody)
 		log.Dbg("decoding response body failed: %v", err)
 		return http.StatusInternalServerError, errors.New("decoding response body failed")

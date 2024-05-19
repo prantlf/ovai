@@ -35,8 +35,7 @@ func readAccount() *account {
 		log.Ftl("opening %s failed: %v", accntFile, err)
 	}
 	var accnt account
-	err = json.NewDecoder(accountFile).Decode(&accnt)
-	if err != nil {
+	if err := json.NewDecoder(accountFile).Decode(&accnt); err != nil {
 		log.Ftl("decoding %s failed: %v", accntFile, err)
 	}
 	return &accnt
@@ -57,8 +56,7 @@ func RefreshAccessToken() (string, error) {
 		return "", err
 	}
 	var resJson response
-	_, err = web.DispatchRequest(req, &resJson)
-	if err != nil {
+	if _, err := web.DispatchRequest(req, &resJson); err != nil {
 		return "", err
 	}
 

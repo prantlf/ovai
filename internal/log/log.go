@@ -35,6 +35,10 @@ func initLog() bool {
 	return IsDbg || IsSrv || IsNet
 }
 
+func Log(format string, args ...any) {
+	out.Printf(format, args...)
+}
+
 func Dbg(format string, args ...any) {
 	if IsDbg {
 		out.Printf(format, args...)

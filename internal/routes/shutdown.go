@@ -2,20 +2,27 @@ package routes
 
 import (
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/prantlf/ovai/internal/log"
-	"github.com/prantlf/ovai/internal/web"
 )
 
-func HandleShutdown(w http.ResponseWriter, r *http.Request) bool {
-	web.LogRequest(w, r)
-	web.EnableCORS(w, r)
-	if r.Method == "POST" {
-		log.Dbg(": shut down")
-		w.WriteHeader(http.StatusNoContent)
-		return true
-	}
-	status := web.DisallowMethod(w, []string{"POST"})
-	web.LogResponse(w, r, status)
-	return false
+var sigch = make(chan os.Signal, 1)
+
+func WaitForShutdown() {
+	signal.Notify(sigch, syscall.SIGINT, syscall.SIGTERM)
+	<-sigch
+}
+
+func HandleShutdown(w http.ResponseWriter, r *http.Request) int {
+	log.Dbg(": shut down")
+	w.WriteHeader(http.StatusNoContent)
+	go func() {
+		time.Sleep(100 * time.Millisecond)
+		close(sigch)
+	}()
+	return http.StatusNoContent
 }

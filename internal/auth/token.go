@@ -79,8 +79,7 @@ func decodeKey() *rsa.PrivateKey {
 	keyBytes := keyDec.Bytes
 	keyParsed, err := x509.ParsePKCS8PrivateKey(keyBytes)
 	if err != nil {
-		keyParsed, err = x509.ParsePKCS1PrivateKey(keyBytes)
-		if err != nil {
+		if keyParsed, err = x509.ParsePKCS1PrivateKey(keyBytes); err != nil {
 			log.Ftl("parsing private key failed: %v", err)
 		}
 	}

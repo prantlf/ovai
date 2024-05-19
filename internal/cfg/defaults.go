@@ -77,8 +77,7 @@ func readDefaults() *defaults {
 		defaultsFile = "model-defaults.json"
 	}
 	var deflts defaults
-	err := json.Unmarshal(builtins, &deflts)
-	if err != nil {
+	if err := json.Unmarshal(builtins, &deflts); err != nil {
 		log.Ftl("decoding built-in defaults failed: %v", err)
 	}
 	log.Dbg("read %s", defaultsFile)
@@ -100,8 +99,7 @@ func readDefaults() *defaults {
 				},
 			},
 		}
-		err = json.Unmarshal(defaultsJson, &over)
-		if err != nil {
+		if err := json.Unmarshal(defaultsJson, &over); err != nil {
 			log.Ftl("decoding %s failed: %v", defaultsFile, err)
 		}
 		mergeDefaults(&deflts, &over)

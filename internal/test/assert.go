@@ -7,6 +7,30 @@ import (
 	"testing"
 )
 
+func Nil(t *testing.T, value any) {
+	if value != nil {
+		t.Errorf("%snot nil\nvalue: %v", location(), value)
+	}
+}
+
+func NotNil(t *testing.T, value any) {
+	if value == nil {
+		t.Errorf("%snil", location())
+	}
+}
+
+func Equal(t *testing.T, expected any, actual any) {
+	if expected != actual {
+		t.Errorf("%snot equal\nexpected: %v\nactual: %v", location(), expected, actual)
+	}
+}
+
+func NotEqual(t *testing.T, expected any, actual any) {
+	if expected == actual {
+		t.Errorf("%sequal\nvalue: %v", location(), expected)
+	}
+}
+
 var wd = getWd()
 var wdLen = len(wd) + 1
 
@@ -23,16 +47,4 @@ func location() string {
 		return fmt.Sprintf("%s:%d: ", file[wdLen:], line)
 	}
 	return ""
-}
-
-func Nil(t *testing.T, value any) {
-	if value != nil {
-		t.Errorf("%snot nil\nvalue: %v", location(), value)
-	}
-}
-
-func Equal(t *testing.T, expected any, actual any) {
-	if expected != actual {
-		t.Errorf("%snot equal\nexpected: %v\nactual: %v", location(), expected, actual)
-	}
 }

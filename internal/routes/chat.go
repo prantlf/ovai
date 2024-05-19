@@ -210,8 +210,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		},
 		Stream: true,
 	}
-	err := json.NewDecoder(r.Body).Decode(&input)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
 	}
 	if len(input.Model) == 0 {
@@ -265,8 +264,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	err = json.NewEncoder(w).Encode(resBody)
-	if err != nil {
+	if err = json.NewEncoder(w).Encode(resBody); err != nil {
 		log.Dbg("! encoding response body failed: %v", err)
 	}
 	return http.StatusOK

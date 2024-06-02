@@ -75,6 +75,8 @@ And the same task as above, only using Docker Compose (place [docker-compose.yml
 
     docker-compose up -d
 
+The image is available as both `ghcr.io/prantlf/ovai` (GitHub) or `prantlf/ovai` (DockerHub).
+
 ### Building
 
 Make sure that you have installed [Go] 1.22 or newer.

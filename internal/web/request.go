@@ -99,9 +99,11 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 		log.Dbg("making request failed: %v", err)
 		return http.StatusInternalServerError, errors.New("making request failed")
 	}
-	if err := res.Body.Close(); err != nil {
-		log.Dbg("closing request body stream failed: %v", err)
-	}
+	defer func() {
+		if err := res.Body.Close(); err != nil {
+			log.Dbg("closing request body stream failed: %v", err)
+		}
+	}()
 
 	if res.StatusCode != http.StatusOK {
 		msg := readError(req, res)

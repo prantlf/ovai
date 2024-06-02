@@ -35,7 +35,15 @@ type LoggedHandlerFunc func(http.ResponseWriter, *http.Request) int
 func EnableCORS(w http.ResponseWriter, r *http.Request) {
 	if origin := r.Header.Get("Origin"); origin != "" {
 		w.Header().Set("Access-Control-Allow-Origin", origin)
-		w.Header().Set("Access-Control-Allow-Methods", "POST")
+		w.Header().Set("Access-Control-Max-Age", "86400")
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		if method := r.Header.Get("Access-Control-Request-Method"); method != "" {
+			w.Header().Set("Access-Control-Allow-Methods", "OPTIONS,POST")
+		}
+		if headers := r.Header.Get("Access-Control-Request-Headers"); headers != "" {
+			w.Header().Set("Access-Control-Allow-Headers", headers)
+		}
+		w.Header().Set("Vary", "Origin")
 	}
 }
 

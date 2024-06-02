@@ -1,5 +1,15 @@
 # Changes
 
+## [0.2.0](https://github.com/prantlf/ovai/compare/v0.1.5...v0.2.0) (2024-06-02)
+
+### Features
+
+* Support CORS preflighting (OPTIONS) ([0f1e6df](https://github.com/prantlf/ovai/commit/0f1e6df2e2107467be7f45eb1f00386f0ee08dc1))
+
+### Bug Fixes
+
+* Complete the CORS response headers ([5dd0a35](https://github.com/prantlf/ovai/commit/5dd0a35d469fe3fddc03cfd713cfab10a13fff9c))
+
 ## [0.1.5](https://github.com/prantlf/ovai/compare/v0.1.4...v0.1.5) (2024-05-12)
 
 ### Bug Fixes

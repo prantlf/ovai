@@ -1,5 +1,12 @@
 # Changes
 
+## [0.2.1](https://github.com/prantlf/ovai/compare/v0.2.0...v0.2.1) (2024-06-02)
+
+### Bug Fixes
+
+* Allow methods specific for each handler for CORS ([247f4c9](https://github.com/prantlf/ovai/commit/247f4c99580ba43e80fe4b32bc9c3e3f436b75d8))
+* Do not close response body before reading it ([bb117c8](https://github.com/prantlf/ovai/commit/bb117c843d6fe2ab9fcdf2bde89cfef0ac8d0a54))
+
 ## [0.2.0](https://github.com/prantlf/ovai/compare/v0.1.5...v0.2.0) (2024-06-02)
 
 ### Features

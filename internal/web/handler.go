@@ -52,7 +52,11 @@ func WrapHandler(fn LoggedHandlerFunc, methods []string) http.HandlerFunc {
 		LogRequest(w, r)
 		EnableCORS(w, r)
 		var status int
-		if slices.Contains(methods, r.Method) {
+		if r.Method == "OPTIONS" {
+			log.Dbg(": preflight")
+			w.Header().Set("Content-Length", "0")
+			w.WriteHeader(http.StatusOK)
+		} else if slices.Contains(methods, r.Method) {
 			status = fn(w, r)
 		} else {
 			status = DisallowMethod(w, methods)

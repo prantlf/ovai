@@ -190,16 +190,16 @@ func (h *chatBisonHandler) extractResponse(data interface{}) (string, int, int) 
 }
 
 type chatResponse struct {
-	Model              string `json:"model"`
-	CreatedAt          string `json:"created_at"`
-	Response           string `json:"response"`
-	Done               bool   `json:"done"`
-	TotalDuration      int64  `json:"total_duration"`
-	LoadDuration       int64  `json:"load_duration"`
-	PromptEvalCount    int    `json:"prompt_eval_count"`
-	PromptEvalDuration int64  `json:"prompt_eval_duration"`
-	EvalCount          int    `json:"eval_count"`
-	EvalDuration       int64  `json:"eval_duration"`
+	Model              string  `json:"model"`
+	CreatedAt          string  `json:"created_at"`
+	Message            message `json:"message"`
+	Done               bool    `json:"done"`
+	TotalDuration      int64   `json:"total_duration"`
+	LoadDuration       int64   `json:"load_duration"`
+	PromptEvalCount    int     `json:"prompt_eval_count"`
+	PromptEvalDuration int64   `json:"prompt_eval_duration"`
+	EvalCount          int     `json:"eval_count"`
+	EvalDuration       int64   `json:"eval_duration"`
 }
 
 func HandleChat(w http.ResponseWriter, r *http.Request) int {
@@ -251,9 +251,12 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	}
 	promptDuration := int64(math.Round(float64(int64(duration) / 4)))
 	resBody := &chatResponse{
-		Model:              input.Model,
-		CreatedAt:          time.Now().UTC().Format(time.RFC3339),
-		Response:           content,
+		Model:     input.Model,
+		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+		Message: message{
+			Role:    "assistant",
+			Content: content,
+		},
 		Done:               true,
 		TotalDuration:      int64(duration),
 		LoadDuration:       0,

@@ -61,7 +61,10 @@ func encodeToken(head *header, pay *payload) (string, error) {
 	}
 	tokenEnc := headEnc + "." + payEnc
 	hasher := sha256.New()
-	hasher.Write([]byte(tokenEnc))
+	if _, err := hasher.Write([]byte(tokenEnc)); err != nil {
+		log.Dbg("hashing token failed: %v", err)
+		return "", errors.New("hashing token failed")
+	}
 	signature, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA256, hasher.Sum(nil))
 	if err != nil {
 		log.Dbg("signing token failed: %v", err)

@@ -57,7 +57,9 @@ func failRequest(w http.ResponseWriter, status int, msg string) int {
 		w.Header().Set("Content-Type", "application/json")
 	}
 	w.WriteHeader(status)
-	w.Write(resBody)
+	if _, err := w.Write(resBody); err != nil {
+		log.Dbg("! writing response body failed: %v", err)
+	}
 	return status
 }
 

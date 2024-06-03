@@ -1,6 +1,6 @@
 # ovai - ollama-vertex-ai
 
-REST API proxy to [Vertex AI] with the interface of [ollama]. HTTP server for accessing Vertex AI via the REST API interface of ollama. Written in [Go].
+REST API proxy to [Vertex AI] with the interface of [ollama]. HTTP server for accessing `Vertex AI` via the REST API interface of `ollama`. Optionally forwarding requests with other models to `ollama`. Written in [Go].
 
 ## Synopsis
 
@@ -56,6 +56,8 @@ Set the environment variable `DEBUG` to one or more strings separated by commas 
 | `ovai:net`    | requests forwarded to Vertex AI and received responses           |
 | `ovai,ovai:*` | all information above                                            |
 
+Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini`, `chat-bison`, `text-bison` or `textembedding-gecko`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
+
 ### Docker
 
 For example, run a container for testing purposes with verbose logging, deleted on exit, exposing the port 22434:
@@ -64,9 +66,11 @@ For example, run a container for testing purposes with verbose logging, deleted 
       -v ${PWD}/google-account.json:/usr/src/app/google-account.json \
       ghcr.io/prantlf/ovai
 
-For example, run a container named `ollama-vertex-ai` in the background with custom defaults, exposing the port 22434:
+For example, run a container named `ovai` in the background with custom defaults, forwarding to `ollama`, exposing the port 22434:
 
     docker run --rm -dt -p 22434:22434 --name ovai \
+      --add-host host.docker.internal:host-gateway \
+      -e OLLAMA_ORIGIN=http://host.docker.internal:11434 \
       -v ${PWD}/google-account.json:/usr/src/app/google-account.json \
       -v ${PWD}/model-defaults.json:/usr/src/app/model-defaults.json \
       ghcr.io/prantlf/ovai
@@ -120,10 +124,7 @@ Generates a text using the specified prompt. See the available [bison text model
 {
   "model": "gemini-1.5-pro-preview-0409",
   "created_at": "2024-05-10T14:10:54.885Z",
-  "response": {
-    "role": "assistant",
-    "content": "Guilds serve as organizations that bring together individuals with ..."
-  },
+  "response": "Guilds serve as organizations that bring together individuals with ...",
   "done": true,
   "total_duration": 13884049373,
   "load_duration": 0,

@@ -3,7 +3,9 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/prantlf/ovai/internal/log"
 )
@@ -52,20 +54,36 @@ func extractEmbeddingsResponse(res *embeddingsResponse) ([]float64, int) {
 
 func HandleEmbeddings(w http.ResponseWriter, r *http.Request) int {
 	var input embeddingsInput
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	reqPayload, err := io.ReadAll(r.Body)
+	if err != nil {
+		return wrongInput(w, fmt.Sprintf("reading request body failed: %v", err))
+	}
+	if err := json.Unmarshal(reqPayload, &input); err != nil {
 		return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
 	}
+	// if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	// 	return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
+	// }
 	if len(input.Model) == 0 {
 		return wrongInput(w, "model missing")
 	}
 	if len(input.Prompt) == 0 {
 		return wrongInput(w, "prompt missing")
 	}
+	var forward bool
+	if strings.HasPrefix(input.Model, "textembedding-gecko") {
+		forward = true
+	} else if !canProxy {
+		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))
+	}
 	if log.IsDbg {
 		log.Dbg("> vectorise %d character%s using %s", len(input.Prompt),
 			log.GetPlural(len(input.Prompt)), input.Model)
 	}
 
+	if !forward {
+		return proxyRequest("embeddings", reqPayload, w, "embedding", input.Model)
+	}
 	reqBody := &embeddingsBody{
 		Instances: []instance{
 			{

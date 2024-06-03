@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"strings"
@@ -200,9 +201,16 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 		},
 		Stream: true,
 	}
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	reqPayload, err := io.ReadAll(r.Body)
+	if err != nil {
+		return wrongInput(w, fmt.Sprintf("reading request body failed: %v", err))
+	}
+	if err := json.Unmarshal(reqPayload, &input); err != nil {
 		return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
 	}
+	// if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	// 	return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
+	// }
 	if len(input.Model) == 0 {
 		return wrongInput(w, "model missing")
 	}
@@ -214,7 +222,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 		handler = &generateGeminiHandler{}
 	} else if strings.HasPrefix(input.Model, "text-bison") {
 		handler = &generateBisonHandler{}
-	} else {
+	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))
 	}
 	if input.Stream {
@@ -225,6 +233,9 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			log.GetPlural(len(input.Prompt)), input.Model)
 	}
 
+	if handler == nil {
+		return proxyRequest("generate", reqPayload, w, "result", input.Model)
+	}
 	urlSuffix, reqBody, output := handler.prepareBody(&input)
 	status, duration, err := forwardRequest(urlSuffix, reqBody, output)
 	if err != nil {

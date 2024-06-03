@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"strings"
@@ -210,9 +211,16 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		},
 		Stream: true,
 	}
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	reqPayload, err := io.ReadAll(r.Body)
+	if err != nil {
+		return wrongInput(w, fmt.Sprintf("reading request body failed: %v", err))
+	}
+	if err := json.Unmarshal(reqPayload, &input); err != nil {
 		return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
 	}
+	// if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	// 	return wrongInput(w, fmt.Sprintf("decoding request body failed: %v", err))
+	// }
 	if len(input.Model) == 0 {
 		return wrongInput(w, "model missing")
 	}
@@ -224,7 +232,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		handler = &chatGeminiHandler{}
 	} else if strings.HasPrefix(input.Model, "chat-bison") {
 		handler = &chatBisonHandler{}
-	} else {
+	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))
 	}
 	if input.Stream {
@@ -235,6 +243,9 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			log.GetPlural(len(input.Messages)), input.Model)
 	}
 
+	if handler == nil {
+		return proxyRequest("chat", reqPayload, w, "answer", input.Model)
+	}
 	urlSuffix, reqBody, output, err := handler.prepareBody(&input)
 	if err != nil {
 		return wrongInput(w, err.Error())

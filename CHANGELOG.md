@@ -1,5 +1,11 @@
 # Changes
 
+## [0.2.2](https://github.com/prantlf/ovai/compare/v0.2.1...v0.2.2) (2024-06-03)
+
+### Bug Fixes
+
+* Fix the message serlialisation in the chat response ([77f2180](https://github.com/prantlf/ovai/commit/77f218045bb2e2a533ed3538dcaf9d5ce5126ac2))
+
 ## [0.2.1](https://github.com/prantlf/ovai/compare/v0.2.0...v0.2.1) (2024-06-02)
 
 ### Bug Fixes

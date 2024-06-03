@@ -1,5 +1,11 @@
 # Changes
 
+## [0.3.0](https://github.com/prantlf/ovai/compare/v0.2.2...v0.3.0) (2024-06-03)
+
+### Features
+
+* Allow forwarding requests to ollama for other than Vertex AI models ([8078a19](https://github.com/prantlf/ovai/commit/8078a19132a5b6f4e41083e944190f18f3300afd))
+
 ## [0.2.2](https://github.com/prantlf/ovai/compare/v0.2.1...v0.2.2) (2024-06-03)
 
 ### Bug Fixes

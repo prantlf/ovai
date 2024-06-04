@@ -16,6 +16,7 @@ type modelDetails struct {
 	Families          []string `json:"families"`
 	ParameterSize     string   `json:"parameter_size"`
 	QuantizationLevel string   `json:"quantization_level"`
+	Purposes          []string `json:"purposes"`
 }
 
 type modelInfo struct {
@@ -33,7 +34,7 @@ type tagsOutput struct {
 }
 
 var googleModels = []modelInfo{
-	modelInfo{
+	{
 		Name:       "gemini-1.5-flash-001",
 		Model:      "gemini-1.5-flash-001",
 		ModifiedAt: "2024-05-24T00:00:00.000Z",
@@ -42,10 +43,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"gemini-1.5-flash",
 			},
+			Purposes: []string{"chat", "generate"},
 		},
 		ExpiresAt: "2025-05-24T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "gemini-1.5-pro-001",
 		Model:      "gemini-1.5-pro-001",
 		ModifiedAt: "2024-05-24T00:00:00.000Z",
@@ -54,10 +56,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"gemini-1.5-pro",
 			},
+			Purposes: []string{"chat", "generate"},
 		},
 		ExpiresAt: "2025-05-24T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "gemini-1.0-pro-002",
 		Model:      "gemini-1.0-pro-002",
 		ModifiedAt: "2024-04-09T00:00:00.000Z",
@@ -66,10 +69,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"gemini-1.0-pro",
 			},
+			Purposes: []string{"chat", "generate"},
 		},
 		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "gemini-1.0-pro-001",
 		Model:      "gemini-1.0-pro-001",
 		ModifiedAt: "2024-02-15T00:00:00.000Z",
@@ -78,10 +82,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"gemini-1.0-pro",
 			},
+			Purposes: []string{"chat", "generate"},
 		},
 		ExpiresAt: "2025-02-15T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "chat-bison-32k@002",
 		Model:      "chat-bison-32k@002",
 		ModifiedAt: "2023-12-04T00:00:00.000Z",
@@ -90,10 +95,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"chat-bison-32k",
 			},
+			Purposes: []string{"chat"},
 		},
 		ExpiresAt: "2024-10-09T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "chat-bison@002",
 		Model:      "chat-bison@002",
 		ModifiedAt: "2023-12-06T00:00:00.000Z",
@@ -102,10 +108,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"chat-bison",
 			},
+			Purposes: []string{"chat"},
 		},
 		ExpiresAt: "2024-10-09T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "chat-bison@001",
 		Model:      "chat-bison@001",
 		ModifiedAt: "2023-07-10T00:00:00.000Z",
@@ -114,10 +121,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"chat-bison",
 			},
+			Purposes: []string{"chat"},
 		},
 		ExpiresAt: "2024-07-06T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "text-bison-32k@002",
 		Model:      "text-bison-32k@002",
 		ModifiedAt: "2023-12-04T00:00:00.000Z",
@@ -126,10 +134,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"text-bison-32k",
 			},
+			Purposes: []string{"generate"},
 		},
 		ExpiresAt: "2024-10-09T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "text-bison@002",
 		Model:      "text-bison@002",
 		ModifiedAt: "2023-12-06T00:00:00.000Z",
@@ -138,10 +147,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"text-bison",
 			},
+			Purposes: []string{"generate"},
 		},
 		ExpiresAt: "2024-10-09T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "text-bison@001",
 		Model:      "text-bison@001",
 		ModifiedAt: "2023-06-07T00:00:00.000Z",
@@ -150,10 +160,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"text-bison",
 			},
+			Purposes: []string{"generate"},
 		},
 		ExpiresAt: "2024-07-06T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "textembedding-gecko@002",
 		Model:      "textembedding-gecko@002",
 		ModifiedAt: "2023-11-02T00:00:00.000Z",
@@ -162,10 +173,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"textembedding-gecko",
 			},
+			Purposes: []string{"embeddings"},
 		},
 		ExpiresAt: "2024-10-09T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "text-multilingual-embedding-002",
 		Model:      "text-multilingual-embedding-002",
 		ModifiedAt: "2024-05-14T00:00:00.000Z",
@@ -174,10 +186,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"text-multilingual-embedding",
 			},
+			Purposes: []string{"embeddings"},
 		},
 		ExpiresAt: "0001-01-01T00:00:00Z",
 	},
-	modelInfo{
+	{
 		Name:       "text-embedding-004",
 		Model:      "text-embedding-004",
 		ModifiedAt: "2024-05-14T00:00:00.000Z",
@@ -186,10 +199,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"textembedding-gecko-multilingual",
 			},
+			Purposes: []string{"embeddings"},
 		},
 		ExpiresAt: "0001-01-01T00:00:00Z",
 	},
-	modelInfo{
+	{
 		Name:       "textembedding-gecko-multilingual@001",
 		Model:      "textembedding-gecko-multilingual@001",
 		ModifiedAt: "2023-11-02T00:00:00.000Z",
@@ -198,10 +212,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"textembedding-gecko-multilingual",
 			},
+			Purposes: []string{"embeddings"},
 		},
 		ExpiresAt: "2025-05-14T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "textembedding-gecko@003",
 		Model:      "textembedding-gecko@003",
 		ModifiedAt: "2023-12-12T00:00:00.000Z",
@@ -210,10 +225,11 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"textembedding-gecko",
 			},
+			Purposes: []string{"embeddings"},
 		},
 		ExpiresAt: "2025-05-14T00:00:00.000Z",
 	},
-	modelInfo{
+	{
 		Name:       "textembedding-gecko@001",
 		Model:      "textembedding-gecko@001",
 		ModifiedAt: "2023-06-07T00:00:00.000Z",
@@ -222,6 +238,7 @@ var googleModels = []modelInfo{
 			Families: []string{
 				"textembedding-gecko",
 			},
+			Purposes: []string{"embeddings"},
 		},
 		ExpiresAt: "2024-07-06T00:00:00.000Z",
 	},

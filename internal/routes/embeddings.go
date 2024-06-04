@@ -71,7 +71,10 @@ func HandleEmbeddings(w http.ResponseWriter, r *http.Request) int {
 		return wrongInput(w, "prompt missing")
 	}
 	var forward bool
-	if strings.HasPrefix(input.Model, "textembedding-gecko") {
+	if strings.HasPrefix(input.Model, "textembedding-gecko") ||
+		strings.HasPrefix(input.Model, "textembedding-gecko-multilingual") ||
+		strings.HasPrefix(input.Model, "text-embedding") ||
+		strings.HasPrefix(input.Model, "text-multilingual-embedding") {
 		forward = true
 	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))

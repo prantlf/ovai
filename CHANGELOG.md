@@ -1,5 +1,16 @@
 # Changes
 
+## [0.4.0](https://github.com/prantlf/ovai/compare/v0.3.0...v0.4.0) (2024-06-04)
+
+### Features
+
+* Support /api/tags for listing available models ([fa5b1f0](https://github.com/prantlf/ovai/commit/fa5b1f01b37c78dcad2a4cf27681c9cb1524bc9f))
+* Support /api/show for inspecting model information ([8a2c2bc](https://github.com/prantlf/ovai/commit/8a2c2bc7a0c4a37efd89282a58a77d5109d91f8c))
+
+### Bug Fixes
+
+* Propagate error message from requests proxied to ollama ([d2f59f1](https://github.com/prantlf/ovai/commit/d2f59f12f5c8e6d5a92c3339dcacf03f99daa639))
+
 ## [0.3.0](https://github.com/prantlf/ovai/compare/v0.2.2...v0.3.0) (2024-06-03)
 
 ### Features

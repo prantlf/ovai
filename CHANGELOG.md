@@ -1,5 +1,16 @@
 # Changes
 
+## [0.5.0](https://github.com/prantlf/ovai/compare/v0.4.0...v0.5.0) (2024-06-04)
+
+### Features
+
+* Add chat, generate and embeddings purposes to the model info ([cbfe399](https://github.com/prantlf/ovai/commit/cbfe3996fb2128ca8b540e62c3d39487c599807e))
+* Recognise model text-unicorn ([8e83e7e](https://github.com/prantlf/ovai/commit/8e83e7e2a84cdfcc170c08964435717e24a1cd68))
+
+### Bug Fixes
+
+* Recognise names of all PalLM embedding models ([b602248](https://github.com/prantlf/ovai/commit/b6022480dff301aed82d2dfbeaaa6018de230731))
+
 ## [0.4.0](https://github.com/prantlf/ovai/compare/v0.3.0...v0.4.0) (2024-06-04)
 
 ### Features

@@ -46,18 +46,15 @@ func readError(req *http.Request, res *http.Response) string {
 	}
 	logError(req, res.StatusCode, resBody)
 	var resComplex responseErrorComplex
-	err = json.Unmarshal(resBody, &resComplex)
-	if err == nil {
+	if err = json.Unmarshal(resBody, &resComplex); err == nil && len(resComplex.Error.Message) > 0 {
 		return resComplex.Error.Message
 	}
 	var resDesc responseErrorDescribed
-	err = json.Unmarshal(resBody, &resDesc)
-	if err == nil {
+	if err = json.Unmarshal(resBody, &resDesc); err == nil && len(resDesc.ErrorDescription) > 0 {
 		return resDesc.ErrorDescription
 	}
 	var resSimple responseErrorSimple
-	err = json.Unmarshal(resBody, &resSimple)
-	if err == nil {
+	if err = json.Unmarshal(resBody, &resSimple); err == nil && len(resSimple.Error) > 0 {
 		return resSimple.Error
 	}
 	return string(resBody)

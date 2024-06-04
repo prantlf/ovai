@@ -220,7 +220,8 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	var handler generateModelHandler
 	if strings.HasPrefix(input.Model, "gemini") {
 		handler = &generateGeminiHandler{}
-	} else if strings.HasPrefix(input.Model, "text-bison") {
+	} else if strings.HasPrefix(input.Model, "text-bison") ||
+		strings.HasPrefix(input.Model, "text-unicorn") {
 		handler = &generateBisonHandler{}
 	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))

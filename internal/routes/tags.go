@@ -165,6 +165,19 @@ var googleModels = []modelInfo{
 		ExpiresAt: "2024-07-06T00:00:00.000Z",
 	},
 	{
+		Name:       "text-unicorn@001",
+		Model:      "text-unicorn@001",
+		ModifiedAt: "2023-11-30T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "text-unicorn",
+			Families: []string{
+				"text-unicorn",
+			},
+			Purposes: []string{"generate"},
+		},
+		ExpiresAt: "2024-11-30T00:00:00.000Z",
+	},
+	{
 		Name:       "textembedding-gecko@002",
 		Model:      "textembedding-gecko@002",
 		ModifiedAt: "2023-11-02T00:00:00.000Z",

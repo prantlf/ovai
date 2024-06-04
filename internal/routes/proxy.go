@@ -31,8 +31,13 @@ func proxyRequest(name string, input []byte, w http.ResponseWriter, result strin
 		return failRequest(w, status, err.Error())
 	}
 	if log.IsDbg {
-		log.Dbg("< %s by %s with %d byte%s", result, model,
-			len(output), log.GetPlural(len(output)))
+		if len(model) > 0 {
+			log.Dbg("< %s by %s with %d byte%s", result, model,
+				len(output), log.GetPlural(len(output)))
+		} else {
+			log.Dbg("< %s with %d byte%s", result,
+				len(output), log.GetPlural(len(output)))
+		}
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)

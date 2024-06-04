@@ -92,6 +92,17 @@ func CreatePostRequest(url string, input interface{}) (*http.Request, error) {
 	return req, nil
 }
 
+func CreateGetRequest(url string) (*http.Request, error) {
+	log.Net("send GET %s", url)
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Dbg("preparing request failed: %v", err)
+		return nil, errors.New("preparing request failed")
+	}
+	req.Header.Set("Accept", "application/json")
+	return req, nil
+}
+
 func CreateRawPostRequest(url string, input []byte) (*http.Request, error) {
 	log.Net("send POST %s\n with body %s", url, input)
 	reader, writer := io.Pipe()

@@ -32,6 +32,7 @@ func main() {
 	http.HandleFunc("/api/generate", web.WrapHandler(routes.HandleGenerate, []string{"POST"}))
 	http.HandleFunc("/api/ping", web.WrapHandler(routes.HandlePing, []string{"GET"}))
 	http.HandleFunc("/api/shutdown", web.WrapHandler(routes.HandleShutdown, []string{"POST"}))
+	http.HandleFunc("/api/tags", web.WrapHandler(routes.HandleTags, []string{"GET"}))
 
 	go func() {
 		log.Log("listen on http://localhost:%s", port)

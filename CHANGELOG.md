@@ -1,5 +1,15 @@
 # Changes
 
+## [0.6.0](https://github.com/prantlf/ovai/compare/v0.5.0...v0.6.0) (2024-06-05)
+
+### Features
+
+* Allow forcing either IPV4 or IPV6 network connections only ([5c0a9e4](https://github.com/prantlf/ovai/commit/5c0a9e401ff450a77bb2a4b651eddd2cb604f431))
+
+### Bug Fixes
+
+* Allow scope and auth_uri empty in the account file ([54dbb29](https://github.com/prantlf/ovai/commit/54dbb29afc8396e64a26ad90e8ee28f09a348cc4))
+
 ## [0.5.0](https://github.com/prantlf/ovai/compare/v0.4.0...v0.5.0) (2024-06-04)
 
 ### Features

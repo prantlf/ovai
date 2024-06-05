@@ -21,7 +21,7 @@ type account struct {
 	PrivateKey   string `json:"private_key"`
 	ClientEmail  string `json:"client_email"`
 	Scope        string `json:"scope,omitempty"`
-	AuthUri      string `json:"auth_uri"`
+	AuthUri      string `json:"auth_uri,omitempty"`
 }
 
 type header struct {
@@ -103,19 +103,11 @@ func createToken() (string, error) {
 	}
 	iat := time.Now().Add(-10 * time.Second)
 	exp := iat.Add(time.Hour)
-	scope := Account.Scope
-	if len(scope) == 0 {
-		scope = "https://www.googleapis.com/auth/cloud-platform"
-	}
-	authUri := Account.AuthUri
-	if len(authUri) == 0 {
-		authUri = "https://www.googleapis.com/oauth2/v4/token"
-	}
 	pay := &payload{
 		Iat:   iat.Unix(),
 		Exp:   exp.Unix(),
-		Scope: scope,
-		Aud:   authUri,
+		Scope: Account.Scope,
+		Aud:   Account.AuthUri,
 		Iss:   Account.ClientEmail,
 	}
 	if log.IsDbg {

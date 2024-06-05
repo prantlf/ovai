@@ -38,6 +38,12 @@ func readAccount() *account {
 	if err := json.NewDecoder(accountFile).Decode(&accnt); err != nil {
 		log.Ftl("decoding %s failed: %v", accntFile, err)
 	}
+	if len(accnt.Scope) == 0 {
+		accnt.Scope = "https://www.googleapis.com/auth/cloud-platform"
+	}
+	if len(accnt.AuthUri) == 0 {
+		accnt.AuthUri = "https://www.googleapis.com/oauth2/v4/token"
+	}
 	return &accnt
 }
 

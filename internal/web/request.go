@@ -2,10 +2,13 @@ package web
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"io"
+	"net"
 	"net/http"
+	"os"
 
 	"github.com/prantlf/ovai/internal/log"
 )
@@ -121,8 +124,64 @@ func CreateRawPostRequest(url string, input []byte) (*http.Request, error) {
 	return req, nil
 }
 
-func DispatchRequest(req *http.Request, output interface{}) (int, error) {
+// type happyEyeballs int
+
+// const (
+// 	ipDefault happyEyeballs = iota + 1
+// 	ipV4
+// 	ipV6
+// )
+
+// var happyEyeballNames = [...]string{"Default", "IPV4", "IPV6"}
+
+// func (h happyEyeballs) String() string {
+// 	return happyEyeballNames[h-1]
+// }
+
+// func (h happyEyeballs) EnumIndex() int {
+// 	return int(h)
+// }
+
+// func parseHappyEyeballs(input string) (happyEyeballs, error) {
+// 	for index, value := range happyEyeballNames {
+// 		if value == input {
+// 			return happyEyeballs(index), nil
+// 		}
+// 	}
+// 	return 0, fmt.Errorf("invalid enum value: %q", input)
+// }
+
+var dialer net.Dialer
+var networkVersion = initDialer()
+
+func initDialer() string {
+	network := os.Getenv("NETWORK")
+	if len(network) > 0 {
+		if network == "IPV4" {
+			return "tcp4"
+		}
+		if network == "IPV6" {
+			return "tcp6"
+		}
+		log.Ftl("Invalid value of NETWORK variable: %q", network)
+	}
+	return ""
+}
+
+func createHttpClient() *http.Client {
 	client := &http.Client{}
+	if len(networkVersion) > 0 {
+		transport := http.DefaultTransport.(*http.Transport).Clone()
+		transport.DialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+			return dialer.DialContext(ctx, networkVersion, addr)
+		}
+		client.Transport = transport
+	}
+	return client
+}
+
+func DispatchRequest(req *http.Request, output interface{}) (int, error) {
+	client := createHttpClient()
 	res, err := client.Do(req)
 	if err != nil {
 		log.Dbg("making request failed: %v", err)
@@ -170,7 +229,7 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 }
 
 func DispatchRawRequest(req *http.Request) (int, []byte, error) {
-	client := &http.Client{}
+	client := createHttpClient()
 	res, err := client.Do(req)
 	if err != nil {
 		log.Dbg("making request failed: %v", err)

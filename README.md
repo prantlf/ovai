@@ -58,6 +58,13 @@ Set the environment variable `DEBUG` to one or more strings separated by commas 
 
 Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini`, `chat-bison`, `text-bison` or `textembedding-gecko`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
 
+Set the environment variable `NETWORK` to enforce IPV4 or IPV6. The default behaviour is to depend on tHe [Happy Eyeballs] implementation in Go and in the underlying OS. valid values:
+
+| `NETWORK` value | What will be used                            |
+|:----------------|:---------------------------------------------|
+| `IPV4`          | enforce the network connection via IPV4 only |
+| `IPV6`          | enforce the network connection via IPV6 only |
+
 ### Docker
 
 For example, run a container for testing purposes with verbose logging, deleted on exit, exposing the port 22434:
@@ -226,6 +233,7 @@ Licensed under the [MIT License].
 [GitHub Releases]: https://github.com/prantlf/ovai/releases/
 [Go]: https://go.dev
 [default model parameters]: ./model-defaults.json
+[Happy Eyeballs] :https://en.wikipedia.org/wiki/Happy_Eyeballs
 [docker-compose.yml]: ./docker-compose.yml
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions

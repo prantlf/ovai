@@ -29,6 +29,8 @@ ENTRYPOINT ["/ovai"]
 ARG DEBUG=ovai,ovai:srv
 ENV DEBUG=${DEBUG}
 ENV PORT=22434
+ENV NETWORK=
+ENV OLLAMA_ORIGIN=
 
 # HEALTHCHECK --interval=5m \
 #   CMD /healthchk http://localhost:22434/api/ping || exit 1

@@ -233,7 +233,7 @@ Licensed under the [MIT License].
 [GitHub Releases]: https://github.com/prantlf/ovai/releases/
 [Go]: https://go.dev
 [default model parameters]: ./model-defaults.json
-[Happy Eyeballs] :https://en.wikipedia.org/wiki/Happy_Eyeballs
+[Happy Eyeballs]: https://en.wikipedia.org/wiki/Happy_Eyeballs
 [docker-compose.yml]: ./docker-compose.yml
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions

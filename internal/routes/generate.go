@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -23,19 +24,26 @@ type modelParameters struct {
 type generateInput struct {
 	Model   string          `json:"model"`
 	Prompt  string          `json:"prompt"`
+	Images  []string        `json:"images"`
 	Stream  bool            `json:"stream"`
 	Options modelParameters `json:"options"`
 }
 
 type generateModelHandler interface {
-	prepareBody(input *generateInput) (string, interface{}, interface{})
+	prepareBody(input *generateInput) (string, interface{}, interface{}, error)
 	extractResponse(data interface{}) (string, int, int)
 }
 
 type generateGeminiHandler struct{}
 
+type inlineData struct {
+	MimeType string `json:"mimeType"`
+	Data     string `json:"data"`
+}
+
 type geminiPart struct {
-	Text string `json:"text"`
+	Text       string      `json:"text,omitempty"`
+	InlineData *inlineData `json:"inlineData,omitempty"`
 }
 
 type geminiContent struct {
@@ -78,25 +86,51 @@ func mergeParameters(target *cfg.GenerationConfig, source *modelParameters) {
 	}
 }
 
-func (h *generateGeminiHandler) prepareBody(input *generateInput) (string, interface{}, interface{}) {
+func createGeminiParts(content string, images []string) ([]geminiPart, error) {
+	parts := []geminiPart{
+		{
+			Text: content,
+		},
+	}
+	for _, image := range images {
+		bytes, err := base64.StdEncoding.DecodeString(image)
+		if err != nil {
+			return nil, fmt.Errorf("invalid image encoding: %s", err.Error())
+		}
+		mimeType := http.DetectContentType(bytes)
+		if !strings.HasPrefix(mimeType, "image/") {
+			return nil, fmt.Errorf("invalid image type: %s", mimeType)
+		}
+		part := geminiPart{
+			InlineData: &inlineData{
+				MimeType: mimeType,
+				Data:     image,
+			},
+		}
+		parts = append(parts, part)
+	}
+	return parts, nil
+}
+
+func (h *generateGeminiHandler) prepareBody(input *generateInput) (string, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":generateContent"
 	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
 	mergeParameters(&generationConfig, &input.Options)
+	parts, err := createGeminiParts(input.Prompt, input.Images)
+	if err != nil {
+		return "", nil, nil, err
+	}
 	body := &geminiBody{
 		Contents: []geminiContent{
 			{
-				Role: "user",
-				Parts: []geminiPart{
-					{
-						Text: input.Prompt,
-					},
-				},
+				Role:  "user",
+				Parts: parts,
 			},
 		},
 		GenerationConfig: generationConfig,
 		SafetySettings:   cfg.Defaults.GeminiDefaults.SafetySettings,
 	}
-	return urlPrefix, body, &geminiOutput{}
+	return urlPrefix, body, &geminiOutput{}, nil
 }
 
 func extractGeminiResponse(data interface{}) (string, int, int) {
@@ -152,7 +186,7 @@ type generateBisonOutput struct {
 	Metadata    bisonMetadata        `json:"metadata"`
 }
 
-func (h *generateBisonHandler) prepareBody(input *generateInput) (string, interface{}, interface{}) {
+func (h *generateBisonHandler) prepareBody(input *generateInput) (string, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":predict"
 	parameters := cfg.Defaults.BisonDefaults.Parameters
 	mergeParameters(&parameters, &input.Options)
@@ -164,7 +198,7 @@ func (h *generateBisonHandler) prepareBody(input *generateInput) (string, interf
 		},
 		Parameters: parameters,
 	}
-	return urlPrefix, body, &generateBisonOutput{}
+	return urlPrefix, body, &generateBisonOutput{}, nil
 }
 
 func (h *generateBisonHandler) extractResponse(data interface{}) (string, int, int) {
@@ -237,7 +271,10 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	if handler == nil {
 		return proxyRequest("generate", reqPayload, w, "result", input.Model)
 	}
-	urlSuffix, reqBody, output := handler.prepareBody(&input)
+	urlSuffix, reqBody, output, err := handler.prepareBody(&input)
+	if err != nil {
+		return wrongInput(w, err.Error())
+	}
 	status, duration, err := forwardRequest(urlSuffix, reqBody, output)
 	if err != nil {
 		return failRequest(w, status, err.Error())

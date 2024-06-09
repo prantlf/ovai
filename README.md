@@ -125,6 +125,7 @@ Generates a text using the specified prompt. See the available [bison text model
 ❯ curl localhost:22434/api/generate -d '{
   "model": "gemini-1.5-pro-preview-0409",
   "prompt": "Describe guilds from Dungeons and Dragons.",
+  "images": [],
   "stream": false
 }'
 
@@ -167,7 +168,8 @@ Replies to a chat with the specified message history. See the available [bison c
     },
     {
       "role": "user",
-      "content": "What race is the best for a barbarian?"
+      "content": "What race is the best for a barbarian?",
+      "images": []
     }
   ],
   "stream": false

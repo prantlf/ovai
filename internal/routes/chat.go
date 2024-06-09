@@ -15,8 +15,9 @@ import (
 )
 
 type message struct {
-	Role    string `json:"role"`
-	Content string `json:"content"`
+	Role    string   `json:"role"`
+	Content string   `json:"content"`
+	Images  []string `json:"images"`
 }
 
 type chatInput struct {
@@ -48,15 +49,16 @@ func convertGeminiMessages(messages []message) ([]geminiContent, error) {
 			} else if msg.Role == "assistant" {
 				role = "model"
 			} else {
-				return []geminiContent{}, fmt.Errorf("invalid chat message role: %q", msg.Role)
+				return nil, fmt.Errorf("invalid chat message role: %q", msg.Role)
 			}
+			parts, err := createGeminiParts(msg.Content, msg.Images)
+			if err != nil {
+				return nil, err
+			}
+			parts[0].Text = msg.Content
 			chatMessages = append(chatMessages, geminiContent{
-				Role: role,
-				Parts: []geminiPart{
-					{
-						Text: msg.Content,
-					},
-				},
+				Role:  role,
+				Parts: parts,
 			})
 		}
 	}
@@ -133,7 +135,7 @@ func convertBisonMessages(messages []message) (string, []bisonMessage, error) {
 			} else if msg.Role == "assistant" {
 				role = "bot"
 			} else {
-				return "", []bisonMessage{}, fmt.Errorf("invalid chat message role: %q", msg.Role)
+				return "", nil, fmt.Errorf("invalid chat message role: %q", msg.Role)
 			}
 			chatMessages = append(chatMessages, bisonMessage{
 				Author:  role,
@@ -142,7 +144,7 @@ func convertBisonMessages(messages []message) (string, []bisonMessage, error) {
 		}
 	}
 	if len(chatMessages) == 0 {
-		return "", []bisonMessage{}, errors.New("no user message found")
+		return "", nil, errors.New("no user message found")
 	}
 	var context string
 	if len(systemMessages) > 0 {

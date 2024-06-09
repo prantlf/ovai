@@ -45,7 +45,7 @@ func encodePart[T any](part *T) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return base64.RawURLEncoding.EncodeToString(bytes), nil
+	return base64.URLEncoding.EncodeToString(bytes), nil
 }
 
 func encodeToken(head *header, pay *payload) (string, error) {
@@ -70,7 +70,7 @@ func encodeToken(head *header, pay *payload) (string, error) {
 		log.Dbg("signing token failed: %v", err)
 		return "", errors.New("signing token failed")
 	}
-	signatureEnc := base64.RawURLEncoding.EncodeToString(signature)
+	signatureEnc := base64.URLEncoding.EncodeToString(signature)
 	return tokenEnc + "." + signatureEnc, nil
 }
 

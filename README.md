@@ -100,7 +100,7 @@ Executing `./ovai`, `make docker-start` or `make docker-up` will require the `go
 
 ## API
 
-See the original [REST API documentation] for details about the interface.
+See the original [REST API documentation] for details about the interface. See also the [lifecycle of the Vertex AI models].
 
 ### Embeddings
 
@@ -203,6 +203,64 @@ The property `stream` has to be always set to `false`, because the streaming mod
 }
 ```
 
+### Tags
+
+Lists available models.
+
+```
+❯ curl localhost:22434/api/tags
+
+{
+  "models": [
+    {
+      "name": "moondream:latest",
+      "model": "moondream:latest",
+      "modified_at": "2024-06-02T16:39:32.532400236+02:00",
+      "size": 1738451197,
+      "digest": "55fc3abd386771e5b5d1bbcc732f3c3f4df6e9f9f08f1131f9cc27ba2d1eec5b",
+      "details": {
+        "parent_model": "",
+        "format": "gguf",
+        "family": "phi2",
+        "families": [
+          "phi2",
+          "clip"
+        ],
+        "parameter_size": "1B",
+        "quantization_level": "Q4_0"
+      },
+      "expires_at": "0001-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+### Show
+
+Show information about a model.
+
+```
+❯ curl localhost:22434/api/chat -d '{"name":"moondream"}'
+
+{
+  "license": "....",
+  "modelfile": "...",
+  "parameters": "temperature 0\nstop \"\u003c|endoftext|\u003e\"\nstop \"Question:\"",
+  "template": "{{ if .Prompt }} Question: {{ .Prompt }}\n\n{{ end }} Answer: {{ .Response }}\n\n",
+  "details": {
+    "parent_model": "",
+    "format": "gguf",
+    "family": "phi2",
+    "families": [
+      "phi2",
+      "clip"
+    ],
+    "parameter_size": "1B",
+    "quantization_level": "Q4_0"
+  }
+}
+```
+
 ### Ping
 
 Checks that the server is running.
@@ -238,6 +296,7 @@ Licensed under the [MIT License].
 [Happy Eyeballs]: https://en.wikipedia.org/wiki/Happy_Eyeballs
 [docker-compose.yml]: ./docker-compose.yml
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
+[lifecycle of the Vertex AI models]: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions
 [bison text models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text#model_versions
 [bison chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-chat#model_versions

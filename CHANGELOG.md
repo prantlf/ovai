@@ -1,5 +1,18 @@
 # Changes
 
+## [0.7.0](https://github.com/prantlf/ovai/compare/v0.6.0...v0.7.0) (2024-06-09)
+
+### Features
+
+* Recognise model gemini-1.0-pro-vision ([d042aec](https://github.com/prantlf/ovai/commit/d042aec0f10b6f20b3461e1000e9564f207a84e1))
+* Support attaching images to generate and chat requests ([a3d7f15](https://github.com/prantlf/ovai/commit/a3d7f15162b77c571f3f18220e92250a3f8ec237))
+* Recognise the model multimodalembedding@001 ([5c3aabe](https://github.com/prantlf/ovai/commit/5c3aabe4bcb66c83e3edbe590f2c2c8a9da45b03))
+
+### Bug Fixes
+
+* Use padded base64 for JWT parts ([8d01c1c](https://github.com/prantlf/ovai/commit/8d01c1ce0add49b07429956eb7e9447d3db92d9e))
+* Do not log preflighting as an error ([de96929](https://github.com/prantlf/ovai/commit/de96929c08dd1bcb50d580a264b73a688c4c4191))
+
 ## [0.6.0](https://github.com/prantlf/ovai/compare/v0.5.0...v0.6.0) (2024-06-05)
 
 ### Features

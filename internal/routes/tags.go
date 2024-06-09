@@ -61,6 +61,19 @@ var googleModels = []modelInfo{
 		ExpiresAt: "2025-05-24T00:00:00.000Z",
 	},
 	{
+		Name:       "gemini-1.0-pro-vision-001",
+		Model:      "gemini-1.0-pro-vision-001",
+		ModifiedAt: "2024-02-15T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-1.0-pro-vision",
+			Families: []string{
+				"gemini-1.0-pro-vision",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2025-02-15T00:00:00.000Z",
+	},
+	{
 		Name:       "gemini-1.0-pro-002",
 		Model:      "gemini-1.0-pro-002",
 		ModifiedAt: "2024-04-09T00:00:00.000Z",

@@ -191,6 +191,19 @@ var googleModels = []modelInfo{
 		ExpiresAt: "2024-11-30T00:00:00.000Z",
 	},
 	{
+		Name:       "multimodalembedding@001",
+		Model:      "multimodalembedding@001",
+		ModifiedAt: "2024-12-02T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "multimodalembedding",
+			Families: []string{
+				"multimodalembedding",
+			},
+			Purposes: []string{"embeddings"},
+		},
+		ExpiresAt: "2025-02-12T00:00:00.000Z",
+	},
+	{
 		Name:       "textembedding-gecko@002",
 		Model:      "textembedding-gecko@002",
 		ModifiedAt: "2023-11-02T00:00:00.000Z",

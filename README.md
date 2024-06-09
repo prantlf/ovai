@@ -1,6 +1,6 @@
 # ovai - ollama-vertex-ai
 
-REST API proxy to [Vertex AI] with the interface of [ollama]. HTTP server for accessing `Vertex AI` via the REST API interface of `ollama`. Optionally forwarding requests with other models to `ollama`. Written in [Go].
+HTTP proxy for accessing [Vertex AI] with the REST API interface of [ollama]. Optionally forwarding requests for other models to `ollama`. Written in [Go].
 
 ## Synopsis
 
@@ -80,7 +80,7 @@ For example, run a container named `ovai` in the background with custom defaults
       -e OLLAMA_ORIGIN=http://host.docker.internal:11434 \
       -v ${PWD}/google-account.json:/usr/src/app/google-account.json \
       -v ${PWD}/model-defaults.json:/usr/src/app/model-defaults.json \
-      ghcr.io/prantlf/ovai
+      prantlf/ovai
 
 And the same task as above, only using Docker Compose (place [docker-compose.yml] to the current directory) to make it easier:
 

@@ -10,7 +10,7 @@ RUN go build -trimpath -gcflags=all="-B" -ldflags="-s -w -buildid=" -o ovai ./cm
 FROM prantlf/healthchk as healthchk
 
 # FROM gcr.io/distroless/static-debian12
-FROM scratch
+FROM busybox:stable
 LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
 
 # RUN apt-get update -y && apt-get upgrade -y && \

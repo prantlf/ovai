@@ -56,6 +56,7 @@ func WrapHandler(fn LoggedHandlerFunc, methods []string) http.HandlerFunc {
 			log.Dbg(": preflight")
 			w.Header().Set("Content-Length", "0")
 			w.WriteHeader(http.StatusOK)
+			status = http.StatusOK
 		} else if slices.Contains(methods, r.Method) {
 			status = fn(w, r)
 		} else {

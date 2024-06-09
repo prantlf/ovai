@@ -7,7 +7,7 @@ WORKDIR /src
 COPY . .
 RUN go build -trimpath -gcflags=all="-B" -ldflags="-s -w -buildid=" -o ovai ./cmd/ovai/main.go
 
-FROM prantlf/healthchk as healthchk
+FROM prantlf/healthchk:0 as healthchk
 
 # FROM gcr.io/distroless/static-debian12
 FROM busybox:stable

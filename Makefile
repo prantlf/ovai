@@ -53,9 +53,6 @@ docker-start:
 docker-kill:
 	docker container kill ovai
 
-docker-log:
-	docker logs ovai
-
 docker-up:
 	IMAGE_HUB= docker compose -f docker-compose.yml up -d --wait
 

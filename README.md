@@ -8,7 +8,7 @@ Get embeddings for a text:
 
 ```
 ❯ curl localhost:22434/api/embeddings -d '{
-  "model": "textembedding-gecko@003",
+  "model": "text-embedding-004",
   "prompt": "Half-orc is the best race for a barbarian."
 }'
 
@@ -58,7 +58,7 @@ Set the environment variable `DEBUG` to one or more strings separated by commas 
 
 Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini`, `chat-bison`, `text-bison` or `textembedding-gecko`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
 
-Set the environment variable `NETWORK` to enforce IPV4 or IPV6. The default behaviour is to depend on tHe [Happy Eyeballs] implementation in Go and in the underlying OS. valid values:
+Set the environment variable `NETWORK` to enforce IPV4 or IPV6. The default behaviour is to depend on the [Happy Eyeballs] implementation in Go and in the underlying OS. valid values:
 
 | `NETWORK` value | What will be used                            |
 |:----------------|:---------------------------------------------|
@@ -123,14 +123,14 @@ Generates a text using the specified prompt. See the available [bison text model
 
 ```
 ❯ curl localhost:22434/api/generate -d '{
-  "model": "gemini-1.5-pro-preview-0409",
+  "model": "gemini-1.5-flash-002",
   "prompt": "Describe guilds from Dungeons and Dragons.",
   "images": [],
   "stream": false
 }'
 
 {
-  "model": "gemini-1.5-pro-preview-0409",
+  "model": "gemini-1.5-flash-002",
   "created_at": "2024-05-10T14:10:54.885Z",
   "response": "Guilds serve as organizations that bring together individuals with ...",
   "done": true,
@@ -160,7 +160,7 @@ Replies to a chat with the specified message history. See the available [bison c
 
 ```
 ❯ curl localhost:22434/api/chat -d '{
-  "model": "gemini-1.0-pro",
+  "model": "gemini-1.5-pro",
   "messages": [
     {
       "role": "system",
@@ -176,7 +176,7 @@ Replies to a chat with the specified message history. See the available [bison c
 }'
 
 {
-  "model": "gemini-1.0-pro",
+  "model": "gemini-1.5-pro",
   "created_at": "2024-05-06T23:32:05.219Z",
   "message": {
     "role": "assistant",

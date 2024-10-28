@@ -35,6 +35,32 @@ type tagsOutput struct {
 
 var googleModels = []modelInfo{
 	{
+		Name:       "gemini-1.5-flash-002",
+		Model:      "gemini-1.5-flash-002",
+		ModifiedAt: "2024-09-24T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-1.5-flash",
+			Families: []string{
+				"gemini-1.5-flash",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2025-09-24T00:00:00.000Z",
+	},
+	{
+		Name:       "gemini-1.5-flash-8b-001",
+		Model:      "gemini-1.5-flash-8b-001",
+		ModifiedAt: "2024-05-24T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-1.5-flash",
+			Families: []string{
+				"gemini-1.5-flash",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2025-05-24T00:00:00.000Z",
+	},
+	{
 		Name:       "gemini-1.5-flash-001",
 		Model:      "gemini-1.5-flash-001",
 		ModifiedAt: "2024-05-24T00:00:00.000Z",
@@ -46,6 +72,19 @@ var googleModels = []modelInfo{
 			Purposes: []string{"chat", "generate"},
 		},
 		ExpiresAt: "2025-05-24T00:00:00.000Z",
+	},
+	{
+		Name:       "gemini-1.5-pro-002",
+		Model:      "gemini-1.5-pro-002",
+		ModifiedAt: "2024-09-24T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-1.5-pro",
+			Families: []string{
+				"gemini-1.5-pro",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2025-09-24T00:00:00.000Z",
 	},
 	{
 		Name:       "gemini-1.5-pro-001",
@@ -110,7 +149,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"chat"},
 		},
-		ExpiresAt: "2024-10-09T00:00:00.000Z",
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
 	{
 		Name:       "chat-bison@002",
@@ -123,20 +162,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"chat"},
 		},
-		ExpiresAt: "2024-10-09T00:00:00.000Z",
-	},
-	{
-		Name:       "chat-bison@001",
-		Model:      "chat-bison@001",
-		ModifiedAt: "2023-07-10T00:00:00.000Z",
-		Details: modelDetails{
-			Family: "chat-bison",
-			Families: []string{
-				"chat-bison",
-			},
-			Purposes: []string{"chat"},
-		},
-		ExpiresAt: "2024-07-06T00:00:00.000Z",
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
 	{
 		Name:       "text-bison-32k@002",
@@ -149,7 +175,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"generate"},
 		},
-		ExpiresAt: "2024-10-09T00:00:00.000Z",
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
 	{
 		Name:       "text-bison@002",
@@ -162,20 +188,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"generate"},
 		},
-		ExpiresAt: "2024-10-09T00:00:00.000Z",
-	},
-	{
-		Name:       "text-bison@001",
-		Model:      "text-bison@001",
-		ModifiedAt: "2023-06-07T00:00:00.000Z",
-		Details: modelDetails{
-			Family: "text-bison",
-			Families: []string{
-				"text-bison",
-			},
-			Purposes: []string{"generate"},
-		},
-		ExpiresAt: "2024-07-06T00:00:00.000Z",
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
 	{
 		Name:       "text-unicorn@001",
@@ -188,7 +201,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"generate"},
 		},
-		ExpiresAt: "2024-11-30T00:00:00.000Z",
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
 	{
 		Name:       "multimodalembedding@001",
@@ -201,7 +214,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"embeddings"},
 		},
-		ExpiresAt: "2025-02-12T00:00:00.000Z",
+		ExpiresAt: "0001-01-01T00:00:00Z",
 	},
 	{
 		Name:       "textembedding-gecko@002",

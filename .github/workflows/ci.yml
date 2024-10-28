@@ -51,6 +51,24 @@ jobs:
         name: ovai
         arch: arm64
 
+  linux-riscv:
+    if: ${{ github.ref_name == 'master' && needs.linux.outputs.changed == 'true' }}
+    needs:
+      - linux
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-go@v5
+    - uses: prantlf/unshelve-changes-action@v2
+      with:
+        files: ${{ needs.linux.outputs.changed-files }}
+        discard-shelf: false
+    - run: GOOS=linux GOARCH=riscv64 make build RELEASE=1
+    - uses: prantlf/shelve-output-action@v3
+      with:
+        name: ovai
+        arch: riscv64
+
   macos:
     if: ${{ github.ref_name == 'master' && needs.linux.outputs.changed == 'true' }}
     needs:
@@ -143,16 +161,17 @@ jobs:
     - uses: docker/setup-qemu-action@v3
     - uses: docker/setup-buildx-action@v3
     - uses: hadolint/hadolint-action@v3.1.0
-    - uses: docker/build-push-action@v5
+    - uses: docker/build-push-action@v6
       with:
         push: false
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6,linux/riscv64
 
   release:
     if: ${{ github.ref_name == 'master' && needs.linux.outputs.changed == 'true' }}
     needs:
       - linux
       - linux-arm
+      - linux-riscv
       - macos
       - macos-arm
       - windows
@@ -165,7 +184,7 @@ jobs:
       with:
         files: ${{ needs.linux.outputs.changed-files }}
         discard-shelf: false
-    - uses: prantlf/unshelve-output-action@v6
+    - uses: prantlf/unshelve-output-action@v7
       with:
         name: ovai
     - uses: prantlf/finish-release-action@v1
@@ -204,9 +223,9 @@ jobs:
       with:
         username: ${{ secrets.DOCKERHUB_USER }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - uses: docker/build-push-action@v5
+    - uses: docker/build-push-action@v6
       with:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        platforms: linux/amd64,linux/arm64
+        platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7,linux/arm/v6,linux/riscv64

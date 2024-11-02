@@ -1,5 +1,17 @@
 # Changes
 
+## [0.10.0](https://github.com/prantlf/ovai/compare/v0.9.0...v0.10.0) (2024-11-02)
+
+### Features
+
+* Remove support for legacy PaLM 2 models ([3325c54](https://github.com/prantlf/ovai/commit/3325c54a64ac4dbb65439f12f728a8a00ac9c286))
+
+### BREAKING CHANGES
+
+Models text-bison\* chat-bison\* and text-unicorn\*
+have been removed. They can't be used in new projects. And they'll be
+disabled on 9th April, 2025.
+
 ## [0.9.0](https://github.com/prantlf/ovai/compare/v0.8.0...v0.9.0) (2024-11-02)
 
 ### Features

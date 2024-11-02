@@ -1,5 +1,12 @@
 # Changes
 
+## [0.9.0](https://github.com/prantlf/ovai/compare/v0.8.0...v0.9.0) (2024-11-02)
+
+### Features
+
+* Recognise multimodalembedding model ([242709f](https://github.com/prantlf/ovai/commit/242709f58ddd8776eaef5476a861408bc93b11ce))
+* Implement streaming mode ([e3989da](https://github.com/prantlf/ovai/commit/e3989dac05863436e21b3551cae8ba40ff5bee95))
+
 ## [0.8.0](https://github.com/prantlf/ovai/compare/v0.7.1...v0.8.0) (2024-11-02)
 
 ### Features

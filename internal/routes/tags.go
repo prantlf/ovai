@@ -282,6 +282,19 @@ var googleModels = []modelInfo{
 		ExpiresAt: "2025-05-14T00:00:00.000Z",
 	},
 	{
+		Name:       "textembedding-gecko@002",
+		Model:      "textembedding-gecko@002",
+		ModifiedAt: "2023-11-02T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "textembedding-gecko",
+			Families: []string{
+				"textembedding-gecko",
+			},
+			Purposes: []string{"embeddings"},
+		},
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
+	},
+	{
 		Name:       "textembedding-gecko@001",
 		Model:      "textembedding-gecko@001",
 		ModifiedAt: "2023-06-07T00:00:00.000Z",
@@ -292,7 +305,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"embeddings"},
 		},
-		ExpiresAt: "2024-07-06T00:00:00.000Z",
+		ExpiresAt: "2025-04-09T00:00:00.000Z",
 	},
 }
 

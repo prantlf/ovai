@@ -277,6 +277,112 @@ Gracefully shuts down the HTTP server and exits the process.
 ❯ curl localhost:22434/api/shutdown -X POST
 ```
 
+## Models
+
+## Vertex AI
+
+Recognised models for embeddings: textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, multimodalembedding@001.
+
+Recognised models for content generation and chat: text-bison@002, text-bison-32k@002, text-unicorn@001, chat-bison@002, chat-bison-32k@002, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
+
+### Ollama
+
+Small models usable on machines with less memory and no AI accelerator:
+
+| Name             | Size   |
+|:-----------------|-------:|
+| gemma2:2b        | 1.6 GB |
+| granite3-dense   | 1.6 GB |
+| granite3-moe     | 2.1 GB |
+| granite3-moe:1b  | 821 MB |
+| internlm2:1.8b   | 1.1 GB |
+| llama3.2:1b      | 1.3 GB |
+| llama3.2:3b      | 2.0 GB |
+| llava-phi3       | 2.9 GB |
+| moondream        | 1.7 GB |
+| nomic-embed-text | 274 MB |
+| orca-mini        | 2.0 GB |
+| phi              | 1.6 GB |
+| phi3             | 2.2 GB |
+| qwen2.5:0.5b     | 397 MB |
+| qwen2.5:1.5b     | 986 MB |
+| smollm           | 990 MB |
+| smollm:135m      | 91 MB  |
+| smollm:360m      | 229 MB |
+| stablelm-zephyr  | 1.6 GB |
+| stablelm2        | 982 MB |
+| tinyllama        | 637 MB |
+
+#### granite3-moe
+
+The IBM Granite 1B and 3B models are the first mixture of experts (MoE) Granite models from IBM designed for low latency usage.
+
+#### granite3-dense
+The IBM Granite 2B and 8B models are designed to support tool-based use cases and support for retrieval augmented generation (RAG), streamlining code generation, translation and bug fixing.
+
+#### phi
+Phi-2: a 2.7B language model by Microsoft Research that demonstrates outstanding reasoning and language understanding capabilities.
+
+#### phi3
+Phi-3 is a family of lightweight 3B (Mini) and 14B (Medium) state-of-the-art open models by Microsoft.
+
+#### orca-mini
+A general-purpose model ranging from 3 billion parameters to 70 billion, suitable for entry-level hardware.
+
+#### tinyllama
+The TinyLlama project is an open endeavor to train a compact 1.1B Llama model on 3 trillion tokens.
+
+#### tinydolphin
+An experimental 1.1B parameter model trained on the new Dolphin 2.8 dataset by Eric Hartford and based on TinyLlama.
+
+#### stablelm2
+Stable LM 2 is a state-of-the-art 1.6B and 12B parameter language model trained on multilingual data in English, Spanish, German, Italian, French, Portuguese, and Dutch.
+
+#### moondream
+moondream2 is a small vision language model designed to run efficiently on edge devices.
+
+#### smollm
+🪐 A family of small models with 135M, 360M, and 1.7B parameters, trained on a new high-quality dataset.
+
+#### internlm2
+InternLM2.5 is a 7B parameter model tailored for practical scenarios with outstanding reasoning capability.
+
+#### dolphin-phi
+2.7B uncensored Dolphin model by Eric Hartford, based on the Phi language model by Microsoft Research.
+
+#### llava-phi3
+A new small LLaVA model fine-tuned from Phi 3 Mini.
+
+#### stablelm-zephyr
+A lightweight chat model allowing accurate, and responsive output without requiring high-end hardware.
+
+#### nuextract
+A 3.8B model fine-tuned on a private high-quality synthetic dataset for information extraction, based on Phi-3.
+
+#### llama3.2
+Meta's Llama 3.2 goes small with 1B and 3B models.
+
+#### gemma2
+Google Gemma 2 is a high-performing and efficient model available in three sizes: 2B, 9B, and 27B.
+
+#### qwen2.5
+Qwen2.5 models are pretrained on Alibaba's latest large-scale dataset, encompassing up to 18 trillion tokens. The model supports up to 128K tokens and has multilingual support.
+
+#### nemotron-mini
+A commercial-friendly small language model by NVIDIA optimized for roleplay, RAG QA, and function calling.
+
+#### gemma
+Gemma is a family of lightweight, state-of-the-art open models built by Google DeepMind. Updated to version 1.1
+
+#### qwen
+Qwen 1.5 is a series of large language models by Alibaba Cloud spanning from 0.5B to 110B parameters
+
+#### qwen2
+Qwen2 is a new series of large language models from Alibaba group
+
+#### nomic-embed-text
+A high-performing open embedding model with a large token context window.
+
 ## Contributing
 
 In lieu of a formal styleguide, take care to maintain the existing coding style. Lint and test your code.

@@ -74,6 +74,7 @@ func HandleEmbeddings(w http.ResponseWriter, r *http.Request) int {
 	if strings.HasPrefix(input.Model, "textembedding-gecko") ||
 		strings.HasPrefix(input.Model, "textembedding-gecko-multilingual") ||
 		strings.HasPrefix(input.Model, "text-embedding") ||
+		strings.HasPrefix(input.Model, "multimodalembedding") ||
 		strings.HasPrefix(input.Model, "text-multilingual-embedding") {
 		forward = true
 	} else if !canProxy {

@@ -143,7 +143,7 @@ Generates a text using the specified prompt. See the available [bison text model
 }
 ```
 
-The property `stream` has to be always set to `false`, because the streaming mode isn't supported. The property `options` is optional with the following defaults:
+The property `stream` defaults to be `true`. The property `options` is optional with the following defaults:
 
 ```
 "options": {
@@ -192,7 +192,7 @@ Replies to a chat with the specified message history. See the available [bison c
 }
 ```
 
-The property `stream` has to be always set to `false`, because the streaming mode isn't supported. The property `options` is optional with the following defaults:
+The property `stream` defaults to `true`. The property `options` is optional with the following defaults:
 
 ```
 "options": {

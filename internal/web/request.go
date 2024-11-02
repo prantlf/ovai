@@ -189,7 +189,7 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 	}
 	defer func() {
 		if err := res.Body.Close(); err != nil {
-			log.Dbg("closing request body stream failed: %v", err)
+			log.Dbg("closing response body stream failed: %v", err)
 		}
 	}()
 
@@ -228,20 +228,20 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 	return http.StatusOK, nil
 }
 
-func DispatchRawRequest(req *http.Request) (int, []byte, error) {
+func BeginRawRequest(req *http.Request) (int, io.ReadCloser, error) {
 	client := createHttpClient()
 	res, err := client.Do(req)
 	if err != nil {
 		log.Dbg("making request failed: %v", err)
 		return http.StatusInternalServerError, nil, errors.New("making request failed")
 	}
-	defer func() {
-		if err := res.Body.Close(); err != nil {
-			log.Dbg("closing request body stream failed: %v", err)
-		}
-	}()
 
 	if res.StatusCode != http.StatusOK {
+		defer func() {
+			if err := res.Body.Close(); err != nil {
+				log.Dbg("closing response body stream failed: %v", err)
+			}
+		}()
 		msg := readError(req, res)
 		if len(msg) == 0 {
 			msg = res.Status
@@ -249,18 +249,32 @@ func DispatchRawRequest(req *http.Request) (int, []byte, error) {
 		return res.StatusCode, nil, errors.New(msg)
 	}
 
-	resBody, err := io.ReadAll(res.Body)
+	return http.StatusOK, res.Body, nil
+}
+
+func DispatchRawRequest(req *http.Request) (int, []byte, error) {
+	status, resReader, err := BeginRawRequest(req)
 	if err != nil {
-		log.Dbg("receive %d: %s %s", res.StatusCode, req.Method, req.URL)
+		return status, nil, err
+	}
+	defer func() {
+		if err := resReader.Close(); err != nil {
+			log.Dbg("closing response body stream failed: %v", err)
+		}
+	}()
+
+	resBody, err := io.ReadAll(resReader)
+	if err != nil {
+		log.Dbg("receive %d: %s %s", status, req.Method, req.URL)
 		log.Dbg("reading response body failed: %v", err)
 		return http.StatusInternalServerError, nil, errors.New("reading response body failed")
 	}
 	if log.IsDbg {
 		var resLog bytes.Buffer
 		if errLog := json.Indent(&resLog, resBody, "", "  "); errLog != nil {
-			log.Net("receive %d: %s %s\n with response %s", res.StatusCode, req.Method, req.URL, resBody)
+			log.Net("receive %d: %s %s\n with response %s", status, req.Method, req.URL, resBody)
 		} else {
-			log.Net("receive %d: %s %s\n with response %s", res.StatusCode, req.Method, req.URL, resLog.Bytes())
+			log.Net("receive %d: %s %s\n with response %s", status, req.Method, req.URL, resLog.Bytes())
 		}
 	}
 	return http.StatusOK, resBody, nil

@@ -1,5 +1,16 @@
 # Changes
 
+## [0.8.0](https://github.com/prantlf/ovai/compare/v0.7.1...v0.8.0) (2024-11-02)
+
+### Features
+
+* Add new models and model versions released by Google this year ([0aeeff1](https://github.com/prantlf/ovai/commit/0aeeff19d14ea405d7544711a4a4d872a1603605))
+
+### BREAKING CHANGES
+
+Models chat-bison@001 and text-bison@001 were removed.
+Google stopped supporting them.
+
 ## [0.7.1](https://github.com/prantlf/ovai/compare/v0.7.0...v0.7.1) (2024-06-09)
 
 ### Bug Fixes

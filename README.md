@@ -56,7 +56,7 @@ Set the environment variable `DEBUG` to one or more strings separated by commas 
 | `ovai:net`    | requests forwarded to Vertex AI and received responses           |
 | `ovai,ovai:*` | all information above                                            |
 
-Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini`, `chat-bison`, `text-bison` or `textembedding-gecko`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
+Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini` or `textembedding-gecko`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
 
 Set the environment variable `NETWORK` to enforce IPV4 or IPV6. The default behaviour is to depend on the [Happy Eyeballs] implementation in Go and in the underlying OS. valid values:
 
@@ -119,7 +119,7 @@ The returned vector of floats has 768 dimensions.
 
 ### Text
 
-Generates a text using the specified prompt. See the available [bison text models] and [gemini chat models].
+Generates a text using the specified prompt. See the available [gemini text and chat models].
 
 ```
 ❯ curl localhost:22434/api/generate -d '{
@@ -156,7 +156,7 @@ The property `stream` defaults to be `true`. The property `options` is optional 
 
 ### Chat
 
-Replies to a chat with the specified message history. See the available [bison chat models] and [gemini chat models].
+Replies to a chat with the specified message history. See the available [gemini text and chat models].
 
 ```
 ❯ curl localhost:22434/api/chat -d '{
@@ -283,7 +283,7 @@ Gracefully shuts down the HTTP server and exits the process.
 
 Recognised models for embeddings: textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, multimodalembedding@001.
 
-Recognised models for content generation and chat: text-bison@002, text-bison-32k@002, text-unicorn@001, chat-bison@002, chat-bison-32k@002, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
+Recognised models for content generation and chat: gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
 
 ### Ollama
 
@@ -404,6 +404,4 @@ Licensed under the [MIT License].
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
 [lifecycle of the Vertex AI models]: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions
-[bison text models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text#model_versions
-[bison chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-chat#model_versions
-[gemini chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini#model_versions
+[gemini text and chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini#model_versions

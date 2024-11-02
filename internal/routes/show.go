@@ -39,9 +39,11 @@ func HandleShow(w http.ResponseWriter, r *http.Request) int {
 	}
 	log.Dbg("> look for %s", input.Name)
 	if strings.HasPrefix(input.Name, "gemini") ||
-		strings.HasPrefix(input.Name, "text-bison") ||
-		strings.HasPrefix(input.Name, "chat-bison") ||
-		strings.HasPrefix(input.Name, "textembedding-gecko") {
+		strings.HasPrefix(input.Name, "textembedding-gecko") ||
+		strings.HasPrefix(input.Name, "textembedding-gecko-multilingual") ||
+		strings.HasPrefix(input.Name, "text-embedding") ||
+		strings.HasPrefix(input.Name, "multimodalembedding") ||
+		strings.HasPrefix(input.Name, "text-multilingual-embedding") {
 		var details *modelDetails
 		for _, model := range googleModels {
 			if model.Name == input.Name {

@@ -70,6 +70,7 @@ func HandleEmbeddings(w http.ResponseWriter, r *http.Request) int {
 	if len(input.Prompt) == 0 {
 		return wrongInput(w, "prompt missing")
 	}
+
 	var forward bool
 	if strings.HasPrefix(input.Model, "textembedding-gecko") ||
 		strings.HasPrefix(input.Model, "textembedding-gecko-multilingual") ||

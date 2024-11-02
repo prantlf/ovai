@@ -28,15 +28,6 @@ type chatInput struct {
 	Options  modelParameters `json:"options"`
 }
 
-type chatModelHandler interface {
-	prepareBody(input *chatInput) (string, interface{}, interface{}, error)
-	prepareStream(input *chatInput) (string, interface{}, interface{}, interface{}, error)
-	extractCompleteResponse(data interface{}) (string, string, int, int)
-	extractStreamResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error)
-}
-
-type chatGeminiHandler struct{}
-
 func convertGeminiMessages(messages []message) ([]geminiContent, error) {
 	systemMessages := make([]geminiPart, 0, 1)
 	chatMessages := make([]geminiContent, 0, len(messages))
@@ -89,7 +80,7 @@ func createChatGeminiBody(input *chatInput) (interface{}, error) {
 	return body, nil
 }
 
-func (h *chatGeminiHandler) prepareBody(input *chatInput) (string, interface{}, interface{}, error) {
+func prepareChatBody(input *chatInput) (string, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":generateContent"
 	body, err := createChatGeminiBody(input)
 	if err != nil {
@@ -98,132 +89,13 @@ func (h *chatGeminiHandler) prepareBody(input *chatInput) (string, interface{}, 
 	return urlPrefix, body, &geminiCompleteOutput{}, nil
 }
 
-func (h *chatGeminiHandler) prepareStream(input *chatInput) (string, interface{}, interface{}, interface{}, error) {
+func prepareChatStream(input *chatInput) (string, interface{}, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":streamGenerateContent?alt=sse"
 	body, err := createChatGeminiBody(input)
 	if err != nil {
 		return "", nil, nil, nil, err
 	}
 	return urlPrefix, body, &geminiPartialOutput{}, &geminiFinalOutput{}, nil
-}
-
-func (h *chatGeminiHandler) extractCompleteResponse(data interface{}) (string, string, int, int) {
-	return extractCompleteGeminiResponse(data)
-}
-
-func (h *chatGeminiHandler) extractStreamResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error) {
-	return extractStreamGeminiResponse(resReader, partialData, finalData)
-}
-
-type chatBisonHandler struct{}
-
-type bisonMessage struct {
-	Author  string `json:"author"`
-	Content string `json:"content"`
-}
-
-type chatBisonInstance struct {
-	Context  string         `json:"context"`
-	Examples []string       `json:"examples"`
-	Messages []bisonMessage `json:"messages"`
-}
-
-type bisonBody struct {
-	Instances  []chatBisonInstance  `json:"instances"`
-	Parameters cfg.GenerationConfig `json:"parameters"`
-}
-
-type bisonCandidate struct {
-	Content string `json:"content"`
-}
-
-type chatPrediction struct {
-	Candidates []bisonCandidate `json:"candidates"`
-}
-
-type bisonOutput struct {
-	Predictions []chatPrediction `json:"predictions"`
-	Metadata    bisonMetadata    `json:"metadata"`
-}
-
-func convertBisonMessages(messages []message) (string, []bisonMessage, error) {
-	systemMessages := make([]string, 0, 1)
-	chatMessages := make([]bisonMessage, 0, len(messages))
-	for _, msg := range messages {
-		if msg.Role == "system" {
-			systemMessages = append(systemMessages, msg.Content)
-		} else {
-			var role string
-			if msg.Role == "user" {
-				role = "user"
-			} else if msg.Role == "assistant" {
-				role = "bot"
-			} else {
-				return "", nil, fmt.Errorf("invalid chat message role: %q", msg.Role)
-			}
-			chatMessages = append(chatMessages, bisonMessage{
-				Author:  role,
-				Content: msg.Content,
-			})
-		}
-	}
-	if len(chatMessages) == 0 {
-		return "", nil, errors.New("no user message found")
-	}
-	var context string
-	if len(systemMessages) > 0 {
-		context = strings.Join(systemMessages, "\n")
-	} else {
-		context = ""
-	}
-	return context, chatMessages, nil
-}
-
-func (h *chatBisonHandler) prepareBody(input *chatInput) (string, interface{}, interface{}, error) {
-	urlPrefix := input.Model + ":predict"
-	context, chatMessages, err := convertBisonMessages(input.Messages)
-	if err != nil {
-		return "", nil, nil, err
-	}
-	parameters := cfg.Defaults.BisonDefaults.Parameters
-	mergeParameters(&parameters, &input.Options)
-	body := &bisonBody{
-		Instances: []chatBisonInstance{
-			{
-				Context:  context,
-				Examples: []string{},
-				Messages: chatMessages,
-			},
-		},
-		Parameters: parameters,
-	}
-	return urlPrefix, body, &bisonOutput{}, nil
-}
-
-func (h *chatBisonHandler) prepareStream(input *chatInput) (string, interface{}, interface{}, interface{}, error) {
-	log.Dbg("streaming for bison models not implemented")
-	return "", nil, nil, nil, errors.New("streaming for bison models not implemented")
-}
-
-func (h *chatBisonHandler) extractCompleteResponse(data interface{}) (string, string, int, int) {
-	output, ok := data.(*bisonOutput)
-	if !ok {
-		log.Ftl("invalid bison response type")
-	}
-	answer := ""
-	if len(output.Predictions) > 0 {
-		prediction := output.Predictions[0]
-		if len(prediction.Candidates) > 0 {
-			answer = prediction.Candidates[0].Content
-		}
-	}
-	metadata := output.Metadata.TokenMetadata
-	return answer, "STOP", metadata.InputTokenCount.TotalTokens, metadata.OutputTokenCount.TotalTokens
-}
-
-func (h *chatBisonHandler) extractStreamResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error) {
-	log.Dbg("streaming for bison models not implemented")
-	return "", "", nil, 0, 0, errors.New("streaming for bison models not implemented")
 }
 
 type chatResponse struct {
@@ -268,11 +140,10 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	if len(input.Messages) == 0 {
 		return wrongInput(w, "messages missing")
 	}
-	var handler chatModelHandler
+
+	var forward bool
 	if strings.HasPrefix(input.Model, "gemini") {
-		handler = &chatGeminiHandler{}
-	} else if strings.HasPrefix(input.Model, "chat-bison") {
-		handler = &chatBisonHandler{}
+		forward = true
 	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))
 	}
@@ -281,7 +152,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			log.GetPlural(len(input.Messages)), input.Model)
 	}
 
-	if handler == nil {
+	if !forward {
 		if input.Stream {
 			return proxyStream("chat", reqPayload, w, "answer", input.Model)
 		} else {
@@ -290,7 +161,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	}
 
 	if input.Stream {
-		urlSuffix, reqBody, partialOutput, finalOutput, err := handler.prepareStream(&input)
+		urlSuffix, reqBody, partialOutput, finalOutput, err := prepareChatStream(&input)
 		if err != nil {
 			return wrongInput(w, err.Error())
 		}
@@ -311,11 +182,13 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			var reason string
 			var promptTokens int
 			var contentTokens int
-			if rest != nil && len(rest) > 0 {
-				content, reason, rest, promptTokens, contentTokens, err = handler.extractStreamResponse(bytes.NewReader(rest), partialOutput, finalOutput)
+			var reader io.Reader
+			if len(rest) > 0 {
+				reader = bytes.NewReader(rest)
 			} else {
-				content, reason, rest, promptTokens, contentTokens, err = handler.extractStreamResponse(resReader, partialOutput, finalOutput)
+				reader = resReader
 			}
+			content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
 			var resBody any
 			final := false
 			if err != nil {
@@ -361,7 +234,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			}
 		}
 	} else {
-		urlSuffix, reqBody, output, err := handler.prepareBody(&input)
+		urlSuffix, reqBody, output, err := prepareChatBody(&input)
 		if err != nil {
 			return wrongInput(w, err.Error())
 		}
@@ -369,7 +242,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		if err != nil {
 			return failRequest(w, status, err.Error())
 		}
-		content, reason, promptTokens, contentTokens := handler.extractCompleteResponse(output)
+		content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
 		tokens := promptTokens + contentTokens
 		if log.IsDbg {
 			log.Dbg("< answer by %s with %d character%s and %d token%s", input.Model,

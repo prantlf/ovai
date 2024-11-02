@@ -26,15 +26,10 @@ type geminiDefaults struct {
 	SafetySettings   []SafetySetting  `json:"safetySettings"`
 }
 
-type bisonDefaults struct {
-	Parameters GenerationConfig `json:"parameters"`
-}
-
 type defaults struct {
 	ApiLocation    string         `json:"apiLocation"`
 	ApiEndpoint    string         `json:"apiEndpoint"`
 	GeminiDefaults geminiDefaults `json:"geminiDefaults"`
-	BisonDefaults  bisonDefaults  `json:"bisonDefaults"`
 }
 
 //go:embed model-defaults.json
@@ -68,7 +63,6 @@ func mergeDefaults(target *defaults, source *defaults) {
 	if len(source.GeminiDefaults.SafetySettings) > 0 {
 		target.GeminiDefaults.SafetySettings = source.GeminiDefaults.SafetySettings
 	}
-	mergeParameters(&target.BisonDefaults.Parameters, &source.BisonDefaults.Parameters)
 }
 
 func readDefaults() *defaults {
@@ -88,12 +82,6 @@ func readDefaults() *defaults {
 		over := defaults{
 			GeminiDefaults: geminiDefaults{
 				GenerationConfig: GenerationConfig{
-					Temperature: -1,
-					TopP:        -1,
-				},
-			},
-			BisonDefaults: bisonDefaults{
-				Parameters: GenerationConfig{
 					Temperature: -1,
 					TopP:        -1,
 				},

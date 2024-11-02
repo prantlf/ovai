@@ -31,15 +31,6 @@ type generateInput struct {
 	Options modelParameters `json:"options"`
 }
 
-type generateModelHandler interface {
-	prepareBody(input *generateInput) (string, interface{}, interface{}, error)
-	prepareStream(input *generateInput) (string, interface{}, interface{}, interface{}, error)
-	extractCompleteResponse(data interface{}) (string, string, int, int)
-	extractStreamResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error)
-}
-
-type generateGeminiHandler struct{}
-
 type inlineData struct {
 	MimeType string `json:"mimeType"`
 	Data     string `json:"data"`
@@ -178,7 +169,7 @@ func createGenerateGeminiBody(input *generateInput) (interface{}, error) {
 	return body, nil
 }
 
-func (h *generateGeminiHandler) prepareBody(input *generateInput) (string, interface{}, interface{}, error) {
+func prepareGenerateBody(input *generateInput) (string, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":generateContent"
 	body, err := createGenerateGeminiBody(input)
 	if err != nil {
@@ -187,7 +178,7 @@ func (h *generateGeminiHandler) prepareBody(input *generateInput) (string, inter
 	return urlPrefix, body, &geminiCompleteOutput{}, nil
 }
 
-func (h *generateGeminiHandler) prepareStream(input *generateInput) (string, interface{}, interface{}, interface{}, error) {
+func prepareGenerateStream(input *generateInput) (string, interface{}, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":streamGenerateContent?alt=sse"
 	body, err := createGenerateGeminiBody(input)
 	if err != nil {
@@ -213,10 +204,6 @@ func extractCompleteGeminiResponse(data interface{}) (string, string, int, int) 
 	}
 	metadata := output.UsageMetadata
 	return answer, reason, metadata.PromptTokenCount, metadata.CandidatesTokenCount
-}
-
-func (h *generateGeminiHandler) extractCompleteResponse(data interface{}) (string, string, int, int) {
-	return extractCompleteGeminiResponse(data)
 }
 
 func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error) {
@@ -302,25 +289,6 @@ func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, f
 	return answer, "", rest, 0, 0, nil
 }
 
-func (h *generateGeminiHandler) extractStreamResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error) {
-	return extractStreamGeminiResponse(resReader, partialData, finalData)
-}
-
-type generateBisonHandler struct{}
-
-type generateBisonInstance struct {
-	Prompt string `json:"prompt"`
-}
-
-type generateBisonBody struct {
-	Instances  []generateBisonInstance `json:"instances"`
-	Parameters cfg.GenerationConfig    `json:"parameters"`
-}
-
-type generatePrediction struct {
-	Content string `json:"content"`
-}
-
 type tokenCount struct {
 	TotalTokens int `json:"totalTokens"`
 }
@@ -328,53 +296,6 @@ type tokenCount struct {
 type tokenMetadata struct {
 	InputTokenCount  tokenCount `json:"inputTokenCount"`
 	OutputTokenCount tokenCount `json:"outputTokenCount"`
-}
-
-type bisonMetadata struct {
-	TokenMetadata tokenMetadata `json:"tokenMetadata"`
-}
-
-type generateBisonOutput struct {
-	Predictions []generatePrediction `json:"predictions"`
-	Metadata    bisonMetadata        `json:"metadata"`
-}
-
-func (h *generateBisonHandler) prepareBody(input *generateInput) (string, interface{}, interface{}, error) {
-	urlPrefix := input.Model + ":predict"
-	parameters := cfg.Defaults.BisonDefaults.Parameters
-	mergeParameters(&parameters, &input.Options)
-	body := &generateBisonBody{
-		Instances: []generateBisonInstance{
-			{
-				Prompt: input.Prompt,
-			},
-		},
-		Parameters: parameters,
-	}
-	return urlPrefix, body, &generateBisonOutput{}, nil
-}
-
-func (h *generateBisonHandler) prepareStream(input *generateInput) (string, interface{}, interface{}, interface{}, error) {
-	log.Dbg("streaming for bison models not implemented")
-	return "", nil, nil, nil, errors.New("streaming for bison models not implemented")
-}
-
-func (h *generateBisonHandler) extractCompleteResponse(data interface{}) (string, string, int, int) {
-	output, ok := data.(*generateBisonOutput)
-	if !ok {
-		log.Ftl("invalid bison response type")
-	}
-	answer := ""
-	if len(output.Predictions) > 0 {
-		answer = output.Predictions[0].Content
-	}
-	metadata := output.Metadata.TokenMetadata
-	return answer, "STOP", metadata.InputTokenCount.TotalTokens, metadata.OutputTokenCount.TotalTokens
-}
-
-func (h *generateBisonHandler) extractStreamResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error) {
-	log.Dbg("streaming for bison models not implemented")
-	return "", "", nil, 0, 0, errors.New("streaming for bison models not implemented")
 }
 
 type generateResponse struct {
@@ -420,12 +341,10 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	if len(input.Prompt) == 0 {
 		return wrongInput(w, "prompt missing")
 	}
-	var handler generateModelHandler
+
+	var forward bool
 	if strings.HasPrefix(input.Model, "gemini") {
-		handler = &generateGeminiHandler{}
-	} else if strings.HasPrefix(input.Model, "text-bison") ||
-		strings.HasPrefix(input.Model, "text-unicorn") {
-		handler = &generateBisonHandler{}
+		forward = true
 	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))
 	}
@@ -434,7 +353,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			log.GetPlural(len(input.Prompt)), input.Model)
 	}
 
-	if handler == nil {
+	if !forward {
 		if input.Stream {
 			return proxyStream("generate", reqPayload, w, "result", input.Model)
 		} else {
@@ -443,7 +362,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	}
 
 	if input.Stream {
-		urlSuffix, reqBody, partialOutput, finalOutput, err := handler.prepareStream(&input)
+		urlSuffix, reqBody, partialOutput, finalOutput, err := prepareGenerateStream(&input)
 		if err != nil {
 			return wrongInput(w, err.Error())
 		}
@@ -464,11 +383,13 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			var reason string
 			var promptTokens int
 			var contentTokens int
-			if rest != nil && len(rest) > 0 {
-				content, reason, rest, promptTokens, contentTokens, err = handler.extractStreamResponse(bytes.NewReader(rest), partialOutput, finalOutput)
+			var reader io.Reader
+			if len(rest) > 0 {
+				reader = bytes.NewReader(rest)
 			} else {
-				content, reason, rest, promptTokens, contentTokens, err = handler.extractStreamResponse(resReader, partialOutput, finalOutput)
+				reader = resReader
 			}
+			content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
 			var resBody any
 			final := false
 			if err != nil {
@@ -508,7 +429,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			}
 		}
 	} else {
-		urlSuffix, reqBody, output, err := handler.prepareBody(&input)
+		urlSuffix, reqBody, output, err := prepareGenerateBody(&input)
 		if err != nil {
 			return wrongInput(w, err.Error())
 		}
@@ -518,7 +439,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(status)
-		content, reason, promptTokens, contentTokens := handler.extractCompleteResponse(output)
+		content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
 		tokens := promptTokens + contentTokens
 		if log.IsDbg {
 			log.Dbg("< result by %s with %d character%s and %d token%s", input.Model,

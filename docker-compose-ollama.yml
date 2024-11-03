@@ -1,0 +1,41 @@
+services:
+  ollama:
+    build:
+      context: .
+      dockerfile: Dockerfile.ollama
+    # image: ollama-healthy
+    ports:
+      - 11434:11434
+    # expose:
+    #   - 11434
+    volumes:
+      - ~/.ollama:/root/.ollama
+    healthcheck:
+      test: ["CMD", "/healthchk", "-m", "HEAD", "http://localhost:11434"]
+      interval: 60s
+      timeout: 20s
+      start_period: 20s
+      start_interval: 2s
+      retries: 3
+    restart: unless-stopped
+  ovai:
+    # depends_on:
+    #   ollama:
+    #     condition: service_healthy
+    image: ${IMAGE_HUB-ghcr.io/prantlf/}ovai
+    environment:
+      OLLAMA_ORIGIN: http://ollama:11434
+      # DEBUG: 'ovai,ovai:*'
+    ports:
+      - 22434:22434
+    volumes:
+      - ./google-account.json:/google-account.json
+      # - ./model-defaults.json:/model-defaults.json
+    healthcheck:
+      test: ["CMD", "/healthchk", "-m", "HEAD", "http://localhost:22434/api/ping"]
+      interval: 60s
+      timeout: 20s
+      start_period: 20s
+      start_interval: 2s
+      retries: 3
+    restart: unless-stopped

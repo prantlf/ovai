@@ -1,0 +1,9 @@
+FROM prantlf/healthchk as healthchk
+
+FROM ollama/ollama
+LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
+
+COPY --from=healthchk /healthchk /
+
+# HEALTHCHECK --interval=5m \
+#   CMD curl -f http://localhost:11434/ping || exit 1

@@ -17,8 +17,6 @@ Get embeddings for a text:
 
 ## Setup
 
-Download Make sure that you have installed [Go] 1.22 or newer.
-
 1. Download an archive with the executable for your hardware and operating system from [GitHub Releases].
 2. Download a JSON file with your Google account key from Google Project Console and save it to the current directory under the name `google-account.json`.
 3. Optionally create a file `model-defaults.json` in the current directory to change the [default model parameters].
@@ -56,7 +54,7 @@ Set the environment variable `DEBUG` to one or more strings separated by commas 
 | `ovai:net`    | requests forwarded to Vertex AI and received responses           |
 | `ovai,ovai:*` | all information above                                            |
 
-Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini` or `textembedding-gecko`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
+Set the environment variable `OLLAMA_ORIGIN` to the origin of the `ollama` service to enable forwarding to `ollama`. If the requested model doesn't start with `gemini`, `multimodalembedding`, `textembedding`  or `text-embedding`, the request will be forwarded to the `ollama` service. This can be used for using `ovai` as the single service with the `ollama` interface, which recognises both `Vertex AI` and `ollama` models.
 
 Set the environment variable `NETWORK` to enforce IPV4 or IPV6. The default behaviour is to depend on the [Happy Eyeballs] implementation in Go and in the underlying OS. valid values:
 
@@ -82,21 +80,22 @@ For example, run a container named `ovai` in the background with custom defaults
       -v ${PWD}/model-defaults.json:/usr/src/app/model-defaults.json \
       prantlf/ovai
 
-And the same task as above, only using Docker Compose (place [docker-compose.yml] to the current directory) to make it easier:
+And the same task as above, only using Docker Compose (place [docker-compose.yml] or [docker-compose-ollama.yml], if you want to use ollama too, to the current directory) to make it easier:
 
-    docker-compose up -d
+    docker-compose up -d --wait
+    docker-compose -f docker-compose-ollama.yml up -d --wait
 
 The image is available as both `ghcr.io/prantlf/ovai` (GitHub) or `prantlf/ovai` (DockerHub).
 
 ### Building
 
-Make sure that you have installed [Go] 1.22 or newer.
+Make sure that you have installed [Go] 1.22.3 or newer.
 
     git clone https://github.com/prantlf/ovai.git
     cd ovai
     make
 
-Executing `./ovai`, `make docker-start` or `make docker-up` will require the `google-account.json` file in the current directory.
+Executing `./ovai`, `make docker-start` or `make docker-up` will require the `google-account.json` file in the current directory, if you don't just proxy the calls to ollama (which needs the `OLLAMA_ORIGIN` environment variable).
 
 ## API
 
@@ -401,6 +400,7 @@ Licensed under the [MIT License].
 [default model parameters]: ./model-defaults.json
 [Happy Eyeballs]: https://en.wikipedia.org/wiki/Happy_Eyeballs
 [docker-compose.yml]: ./docker-compose.yml
+]docker-compose-ollama.yml]: ./docker-compose-ollama.yml
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
 [lifecycle of the Vertex AI models]: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions

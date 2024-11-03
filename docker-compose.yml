@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   ovai:
     image: ${IMAGE_HUB-ghcr.io/prantlf/}ovai
@@ -10,7 +9,7 @@ services:
       - ./google-account.json:/google-account.json
       # - ./model-defaults.json:/model-defaults.json
     healthcheck:
-      test: ["CMD", "/healthchk", "http://localhost:22434/api/ping"]
+      test: ["CMD", "/healthchk", "-m", "HEAD", "http://localhost:22434/api/ping"]
       interval: 60s
       timeout: 20s
       start_period: 20s

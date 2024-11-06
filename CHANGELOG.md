@@ -1,5 +1,12 @@
 # Changes
 
+## [0.11.0](https://github.com/prantlf/ovai/compare/v0.10.0...v0.11.0) (2024-11-06)
+
+### Features
+
+* Support method HEAD for /api/ping too ([5fd367b](https://github.com/prantlf/ovai/commit/5fd367b38a0369a0b7e31a1ee6137d50f546fdbd))
+* Add docker compose example for ovai & ollama ([04677c1](https://github.com/prantlf/ovai/commit/04677c1e3d409e5157b64449fdb126f1bdcf92ff))
+
 ## [0.10.0](https://github.com/prantlf/ovai/compare/v0.9.0...v0.10.0) (2024-11-02)
 
 ### Features

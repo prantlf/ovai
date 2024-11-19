@@ -400,7 +400,7 @@ Licensed under the [MIT License].
 [default model parameters]: ./model-defaults.json
 [Happy Eyeballs]: https://en.wikipedia.org/wiki/Happy_Eyeballs
 [docker-compose.yml]: ./docker-compose.yml
-]docker-compose-ollama.yml]: ./docker-compose-ollama.yml
+[docker-compose-ollama.yml]: ./docker-compose-ollama.yml
 [REST API documentation]: https://github.com/ollama/ollama/blob/main/docs/api.md
 [lifecycle of the Vertex AI models]: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions

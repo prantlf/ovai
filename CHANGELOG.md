@@ -1,5 +1,12 @@
 # Changes
 
+## [0.12.0](https://github.com/prantlf/ovai/compare/v0.11.0...v0.12.0) (2025-01-01)
+
+### Features
+
+* Support the new /api/embed ([bf08701](https://github.com/prantlf/ovai/commit/bf087017b02000e7dc63fe775d20a1492c81f6fc))
+* Recognise gemini-2.0-flash-exp ([439ffa3](https://github.com/prantlf/ovai/commit/439ffa3337816b0f4175d1b3ffb09fbba437aeb1))
+
 ## [0.11.0](https://github.com/prantlf/ovai/compare/v0.10.0...v0.11.0) (2024-11-06)
 
 ### Features

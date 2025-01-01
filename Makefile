@@ -20,6 +20,10 @@ test:
 bench::
 	cd bench && go test -benchmem -bench=.
 
+upgrade::
+	go get -u ./...
+	go mod tidy
+
 clean:
 	go clean
 	rm -f ovai

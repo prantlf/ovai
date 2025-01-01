@@ -7,12 +7,12 @@ HTTP proxy for accessing [Vertex AI] with the REST API interface of [ollama]. Op
 Get embeddings for a text:
 
 ```
-❯ curl localhost:22434/api/embeddings -d '{
+❯ curl localhost:22434/api/embed -d '{
   "model": "text-embedding-004",
-  "prompt": "Half-orc is the best race for a barbarian."
+  "input": "Half-orc is the best race for a barbarian."
 }'
 
-{ "embedding": [0.05424513295292854, -0.023687424138188362, ...] }
+{ "embeddings": [[0.05424513295292854, -0.023687424138188362, ...]] }
 ```
 
 ## Setup
@@ -103,7 +103,20 @@ See the original [REST API documentation] for details about the interface. See a
 
 ### Embeddings
 
-Creates a vector from the specified prompt. See the available [embedding models].
+Creates a vectors from the specified input. See the available [embedding models].
+
+```
+❯ curl localhost:22434/api/embed -d '{
+  "model": "textembedding-gecko@003",
+  "input": ["Half-orc is the best race for a barbarian."]
+}'
+
+{ "embeddings": [[0.05424513295292854, -0.023687424138188362, ...]] }
+```
+
+The returned vector of floats has 768 dimensions.
+
+Previous request remains supported for compatibility:
 
 ```
 ❯ curl localhost:22434/api/embeddings -d '{
@@ -114,7 +127,6 @@ Creates a vector from the specified prompt. See the available [embedding models]
 { "embedding": [0.05424513295292854, -0.023687424138188362, ...] }
 ```
 
-The returned vector of floats has 768 dimensions.
 
 ### Text
 
@@ -239,7 +251,7 @@ Lists available models.
 Show information about a model.
 
 ```
-❯ curl localhost:22434/api/chat -d '{"name":"moondream"}'
+❯ curl localhost:22434/api/show -d '{"name":"moondream"}'
 
 {
   "license": "....",

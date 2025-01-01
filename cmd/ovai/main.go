@@ -29,6 +29,7 @@ func main() {
 
 	http.HandleFunc("/api/chat", web.WrapHandler(routes.HandleChat, []string{"POST"}))
 	http.HandleFunc("/api/embeddings", web.WrapHandler(routes.HandleEmbeddings, []string{"POST"}))
+	http.HandleFunc("/api/embed", web.WrapHandler(routes.HandleEmbed, []string{"POST"}))
 	http.HandleFunc("/api/generate", web.WrapHandler(routes.HandleGenerate, []string{"POST"}))
 	http.HandleFunc("/api/ping", web.WrapHandler(routes.HandlePing, []string{"GET", "HEAD"}))
 	http.HandleFunc("/api/show", web.WrapHandler(routes.HandleShow, []string{"POST"}))

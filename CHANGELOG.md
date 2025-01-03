@@ -1,5 +1,11 @@
 # Changes
 
+## [0.13.0](https://github.com/prantlf/ovai/compare/v0.12.0...v0.13.0) (2025-01-03)
+
+### Features
+
+* Recognise model text-embedding-005 ([4c315f8](https://github.com/prantlf/ovai/commit/4c315f86bc30c759dee83920d58595da68dc6a9d))
+
 ## [0.12.0](https://github.com/prantlf/ovai/compare/v0.11.0...v0.12.0) (2025-01-01)
 
 ### Features

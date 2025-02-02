@@ -302,12 +302,13 @@ Small models usable on machines with less memory and no AI accelerator:
 
 | Name             | Size   |
 |:-----------------|-------:|
+| deepseek-r1:1.5b | 1.1 GB |
 | gemma2:2b        | 1.6 GB |
 | granite3.1-dense:2b    | 1.5 GB |
 | granite3.1-moe:1b      | 2.0 GB |
 | granite3.1-moe:3b      | 1.4 GB |
 | granite-embedding:30m  |  63 MB |
-| granite-embedding:280m | 563 MB |
+| granite-embedding:278m | 563 MB |
 | internlm2:1.8b   | 1.1 GB |
 | llama3.2:1b      | 1.3 GB |
 | llama3.2:3b      | 2.0 GB |
@@ -326,6 +327,10 @@ Small models usable on machines with less memory and no AI accelerator:
 | stablelm-zephyr  | 1.6 GB |
 | stablelm2        | 982 MB |
 | tinyllama        | 637 MB |
+
+
+#### deepseek-r1
+DeepSeek's first-generation of reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen. 
 
 #### gemma2
 Google Gemma 2 is a high-performing and efficient model available in three sizes: 2B, 9B, and 27B.

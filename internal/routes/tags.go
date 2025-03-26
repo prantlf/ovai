@@ -35,6 +35,45 @@ type tagsOutput struct {
 
 var googleModels = []modelInfo{
 	{
+		Name:       "gemini-2.5-pro-exp-03-25",
+		Model:      "gemini-2.5-pro-exp-03-25",
+		ModifiedAt: "2025-01-01T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-pro",
+			Families: []string{
+				"gemini-2.5-pro",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
+	{
+		Name:       "gemini-2.0-flash-lite-001",
+		Model:      "gemini-2.0-flash-lite-001",
+		ModifiedAt: "2025-02-25T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.0-flash-lite",
+			Families: []string{
+				"gemini-2.0-flash-lite",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2026-02-25T00:00:00.000Z",
+	},
+	{
+		Name:       "gemini-2.0-flash-001",
+		Model:      "gemini-2.0-flash-001",
+		ModifiedAt: "2025-02-05T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.0-flash",
+			Families: []string{
+				"gemini-2.0-flash",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2026-02-05T00:00:00.000Z",
+	},
+	{
 		Name:       "gemini-2.0-flash-exp",
 		Model:      "gemini-2.0-flash-exp",
 		ModifiedAt: "2024-12-01T00:00:00.000Z",

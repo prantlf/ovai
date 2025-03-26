@@ -294,7 +294,7 @@ Gracefully shuts down the HTTP server and exits the process.
 
 Recognised models for embeddings: textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, text-embedding-005, multimodalembedding@001.
 
-Recognised models for content generation and chat: gemini-2.0-flash-exp, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
+Recognised models for content generation and chat: gemini-2.5-pro-exp-03-25, gemini-2.0-flash, gemini-2.0-flash-lite, gemini-2.0-flash-exp, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
 
 ### Ollama
 
@@ -304,6 +304,8 @@ Small models usable on machines with less memory and no AI accelerator:
 |:-----------------|-------:|
 | deepseek-r1:1.5b | 1.1 GB |
 | gemma2:2b        | 1.6 GB |
+| gemma3:1b        | 815 MB |
+| gemma3:4b        | 3.3 GB |
 | granite3.1-dense:2b    | 1.5 GB |
 | granite3.1-moe:1b      | 2.0 GB |
 | granite3.1-moe:3b      | 1.4 GB |

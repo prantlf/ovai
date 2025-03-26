@@ -337,6 +337,9 @@ DeepSeek's first-generation of reasoning models with comparable performance to O
 #### gemma2
 Google Gemma 2 is a high-performing and efficient model available in three sizes: 2B, 9B, and 27B.
 
+#### gemma3
+Gemma is a lightweight, family of models from Google built on Gemini technology. The Gemma 3 models are multimodal—processing text and images—and feature a 128K context window with support for over 140 languages. Available in 1B, 4B, 12B, and 27B parameter sizes, they excel in tasks like question answering, summarization, and reasoning, while their compact design allows deployment on resource-limited devices.
+
 #### granite3.1-dense
 The IBM Granite 2B and 8B models are text-only dense LLMs trained on over 12 trillion tokens of data, demonstrated significant improvements over their predecessors in performance and speed in IBM’s initial testing. 
 

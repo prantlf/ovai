@@ -1,5 +1,11 @@
 # Changes
 
+## [0.14.0](https://github.com/prantlf/ovai/compare/v0.13.0...v0.14.0) (2025-03-26)
+
+### Features
+
+* Recognise gemini 2.0 and 2.5 experimental models ([e2e57ab](https://github.com/prantlf/ovai/commit/e2e57ab9dc0d0c8e963ee31758d794fb0eabf497))
+
 ## [0.13.0](https://github.com/prantlf/ovai/compare/v0.12.0...v0.13.0) (2025-01-03)
 
 ### Features

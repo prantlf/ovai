@@ -34,6 +34,20 @@ type tagsOutput struct {
 }
 
 var googleModels = []modelInfo{
+
+	{
+		Name:       "gemini-2.0-flash-thinking-exp-01-21",
+		Model:      "gemini-2.0-flash-thinking-exp-01-21",
+		ModifiedAt: "2025-01-25T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.0-flash-thinking",
+			Families: []string{
+				"gemini-2.0-flash-thinking",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
 	{
 		Name:       "gemini-2.5-pro-exp-03-25",
 		Model:      "gemini-2.5-pro-exp-03-25",

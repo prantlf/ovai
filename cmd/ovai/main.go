@@ -11,7 +11,7 @@ import (
 	"github.com/prantlf/ovai/internal/web"
 )
 
-const version = "0.14.0"
+const version = "0.14.1"
 
 func main() {
 	if log.IsDbg {

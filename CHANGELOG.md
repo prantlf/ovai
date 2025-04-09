@@ -1,5 +1,11 @@
 # Changes
 
+## [0.14.1](https://github.com/prantlf/ovai/compare/v0.14.0...v0.14.1) (2025-04-09)
+
+### Bug Fixes
+
+* Serialize the model size as "size", not as "message" to /tags ([7f7fe90](https://github.com/prantlf/ovai/commit/7f7fe900df9224877003eebf3b09e6e17d3c7e3b))
+
 ## [0.14.0](https://github.com/prantlf/ovai/compare/v0.13.0...v0.14.0) (2025-03-26)
 
 ### Features

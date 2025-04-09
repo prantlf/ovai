@@ -23,7 +23,7 @@ type modelInfo struct {
 	Name       string       `json:"name"`
 	Model      string       `json:"model"`
 	ModifiedAt string       `json:"modified_at"`
-	Size       int64        `json:"message"`
+	Size       int64        `json:"size"`
 	Digest     string       `json:"digest"`
 	Details    modelDetails `json:"details"`
 	ExpiresAt  string       `json:"expires_at"`

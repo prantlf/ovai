@@ -1,5 +1,11 @@
 # Changes
 
+## [0.15.0](https://github.com/prantlf/ovai/compare/v0.14.1...v0.15.0) (2025-04-11)
+
+### Features
+
+* Recognise model gemini-2.0-flash-thinking-exp-01-21 ([4442a58](https://github.com/prantlf/ovai/commit/4442a583af89c387a3f8857b6412529fe91b28b3))
+
 ## [0.14.1](https://github.com/prantlf/ovai/compare/v0.14.0...v0.14.1) (2025-04-09)
 
 ### Bug Fixes

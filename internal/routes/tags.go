@@ -34,7 +34,32 @@ type tagsOutput struct {
 }
 
 var googleModels = []modelInfo{
-
+	{
+		Name:       "gemini-2.5-pro-preview-06-05",
+		Model:      "gemini-2.5-pro-preview-06-05",
+		ModifiedAt: "2025-01-01T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-pro",
+			Families: []string{
+				"gemini-2.5-pro",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
+	{
+		Name:       "gemini-2.5-flash-preview-05-20",
+		Model:      "gemini-2.5-flash-preview-05-20",
+		ModifiedAt: "2025-01-01T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-flash",
+			Families: []string{
+				"gemini-2.5-flash",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
 	{
 		Name:       "gemini-2.0-flash-thinking-exp-01-21",
 		Model:      "gemini-2.0-flash-thinking-exp-01-21",

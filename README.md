@@ -134,14 +134,14 @@ Generates a text using the specified prompt. See the available [gemini text and 
 
 ```
 ❯ curl localhost:22434/api/generate -d '{
-  "model": "gemini-1.5-flash-002",
+  "model": "gemini-2.0-flash-001",
   "prompt": "Describe guilds from Dungeons and Dragons.",
   "images": [],
   "stream": false
 }'
 
 {
-  "model": "gemini-1.5-flash-002",
+  "model": "gemini-2.0-flash-001",
   "created_at": "2024-05-10T14:10:54.885Z",
   "response": "Guilds serve as organizations that bring together individuals with ...",
   "done": true,
@@ -171,7 +171,7 @@ Replies to a chat with the specified message history. See the available [gemini 
 
 ```
 ❯ curl localhost:22434/api/chat -d '{
-  "model": "gemini-1.5-pro",
+  "model": "gemini-2.0-pro",
   "messages": [
     {
       "role": "system",
@@ -187,7 +187,7 @@ Replies to a chat with the specified message history. See the available [gemini 
 }'
 
 {
-  "model": "gemini-1.5-pro",
+  "model": "gemini-2.0-pro",
   "created_at": "2024-05-06T23:32:05.219Z",
   "message": {
     "role": "assistant",
@@ -294,7 +294,7 @@ Gracefully shuts down the HTTP server and exits the process.
 
 Recognised models for embeddings: textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, text-embedding-005, multimodalembedding@001.
 
-Recognised models for content generation and chat: gemini-2.5-pro-exp-03-25, gemini-2.0-flash, gemini-2.0-flash-lite, gemini-2.0-flash-exp, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
+Recognised models for content generation and chat: gemini-2.5-pro-preview-06-05, gemini-2.5-flash-preview-05-20, gemini-2.5-pro-exp-03-25, gemini-2.0-flash, gemini-2.0-flash-lite, gemini-2.0-flash-exp, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
 
 ### Ollama
 
@@ -303,7 +303,6 @@ Small models usable on machines with less memory and no AI accelerator:
 | Name             | Size   |
 |:-----------------|-------:|
 | deepseek-r1:1.5b | 1.1 GB |
-| gemma2:2b        | 1.6 GB |
 | gemma3:1b        | 815 MB |
 | gemma3:4b        | 3.3 GB |
 | granite3.1-dense:2b    | 1.5 GB |
@@ -320,8 +319,8 @@ Small models usable on machines with less memory and no AI accelerator:
 | orca-mini        | 2.0 GB |
 | phi              | 1.6 GB |
 | phi3             | 2.2 GB |
-| qwen2.5:0.5b     | 397 MB |
-| qwen2.5:1.5b     | 986 MB |
+| qwen3:0.6b       | 397 MB |
+| qwen3:1.7b       | 986 MB |
 | smollm           | 990 MB |
 | smollm:135m      | 91 MB  |
 | smollm:360m      | 229 MB |
@@ -330,12 +329,8 @@ Small models usable on machines with less memory and no AI accelerator:
 | stablelm2        | 982 MB |
 | tinyllama        | 637 MB |
 
-
 #### deepseek-r1
 DeepSeek's first-generation of reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen. 
-
-#### gemma2
-Google Gemma 2 is a high-performing and efficient model available in three sizes: 2B, 9B, and 27B.
 
 #### gemma3
 Gemma is a lightweight, family of models from Google built on Gemini technology. The Gemma 3 models are multimodal—processing text and images—and feature a 128K context window with support for over 140 languages. Available in 1B, 4B, 12B, and 27B parameter sizes, they excel in tasks like question answering, summarization, and reasoning, while their compact design allows deployment on resource-limited devices.
@@ -379,14 +374,8 @@ Phi-2: a 2.7B language model by Microsoft Research that demonstrates outstanding
 #### phi3
 Phi-3 is a family of lightweight 3B (Mini) and 14B (Medium) state-of-the-art open models by Microsoft.
 
-#### qwen
-Qwen 1.5 is a series of large language models by Alibaba Cloud spanning from 0.5B to 110B parameters
-
-#### qwen2
-Qwen2 is a new series of large language models from Alibaba group
-
-#### qwen2.5
-Qwen2.5 models are pretrained on Alibaba's latest large-scale dataset, encompassing up to 18 trillion tokens. The model supports up to 128K tokens and has multilingual support.
+#### qwen3
+Qwen3 is the latest generation of large language models in Qwen series, offering a comprehensive suite of dense and mixture-of-experts (MoE) models. 
 
 #### smollm
 🪐 A family of small models with 135M, 360M, and 1.7B parameters, trained on a new high-quality dataset.

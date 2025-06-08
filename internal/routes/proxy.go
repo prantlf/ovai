@@ -69,9 +69,18 @@ func proxyStream(name string, input []byte, w http.ResponseWriter, result string
 	for {
 		size, err := resReader.Read(buf)
 		if err == io.EOF {
-			break
-		}
-		if err != nil {
+			if size == 0 {
+				break
+			} else {
+				if log.IsDbg {
+					if len(model) > 0 {
+						log.Dbg("< %s by %s with %d byte%s and EOF", result, model, size, log.GetPlural(size))
+					} else {
+						log.Dbg("< %s with %d byte%s and EOF", result, size, log.GetPlural(size))
+					}
+				}
+			}
+		} else if err != nil {
 			log.Dbg("reading response body stream failed: %v", err)
 		} else {
 			if log.IsDbg {

@@ -21,12 +21,14 @@ type modelParameters struct {
 	Temperature     float64 `json:"temperature"`
 	TopP            float64 `json:"top_p"`
 	TopK            int     `json:"top_k"`
+	ThinkingBudget  int     `json:"thinking_budget"`
 }
 
 type generateInput struct {
 	Model   string          `json:"model"`
 	Prompt  string          `json:"prompt"`
 	Images  []string        `json:"images"`
+	Think   bool            `json:"think"`
 	Stream  bool            `json:"stream"`
 	Options modelParameters `json:"options"`
 }
@@ -38,6 +40,7 @@ type inlineData struct {
 
 type geminiPart struct {
 	Text       string      `json:"text,omitempty"`
+	Thought    bool        `json:"thought,omitempty"`
 	InlineData *inlineData `json:"inlineData,omitempty"`
 }
 
@@ -121,6 +124,9 @@ func mergeParameters(target *cfg.GenerationConfig, source *modelParameters) {
 	if source.TopK > 0 {
 		target.TopK = source.TopK
 	}
+	if source.ThinkingBudget > 0 {
+		target.ThinkingConfig.ThinkingBudget = source.ThinkingBudget
+	}
 }
 
 func createGeminiParts(content string, images []string) ([]geminiPart, error) {
@@ -151,6 +157,11 @@ func createGeminiParts(content string, images []string) ([]geminiPart, error) {
 
 func createGenerateGeminiBody(input *generateInput) (interface{}, error) {
 	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
+	if input.Think {
+		generationConfig.ThinkingConfig = cfg.ThinkingConfig{
+			IncludeThoughts: true,
+		}
+	}
 	mergeParameters(&generationConfig, &input.Options)
 	parts, err := createGeminiParts(input.Prompt, input.Images)
 	if err != nil {
@@ -187,35 +198,45 @@ func prepareGenerateStream(input *generateInput) (string, interface{}, interface
 	return urlPrefix, body, &geminiPartialOutput{}, &geminiFinalOutput{}, nil
 }
 
-func extractCompleteGeminiResponse(data interface{}) (string, string, int, int) {
+func extractCompleteGeminiResponse(data interface{}) (string, string, string, int, int) {
 	output, ok := data.(*geminiCompleteOutput)
 	if !ok {
 		log.Ftl("invalid gemini complete response type")
 	}
+	thoughts := ""
 	answer := ""
 	reason := ""
 	if len(output.Candidates) > 0 {
 		candidate := output.Candidates[0]
 		parts := candidate.Content.Parts
-		if len(parts) > 0 {
-			answer = parts[0].Text
+		for _, part := range parts {
+			if part.Thought {
+				thoughts += part.Text
+			} else {
+				answer += part.Text
+			}
 		}
 		reason = candidate.FinishReason
 	}
 	metadata := output.UsageMetadata
-	return answer, reason, metadata.PromptTokenCount, metadata.CandidatesTokenCount
+	return thoughts, answer, reason, metadata.PromptTokenCount, metadata.CandidatesTokenCount
 }
 
-func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, []byte, int, int, error) {
+func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, finalData interface{}) (string, string, string, []byte, int, int, error) {
 	buf := make([]byte, 1024*1024)
 	size, err := resReader.Read(buf)
 	if err == io.EOF {
-		log.Dbg("response body stream ended unexpectedly")
-		return "", "", nil, 0, 0, errors.New("response body stream ended unexpectedly")
-	}
-	if err != nil {
+		if size == 0 {
+			log.Dbg("response body stream ended unexpectedly")
+			return "", "", "", nil, 0, 0, errors.New("response body stream ended unexpectedly")
+		} else {
+			if log.IsDbg {
+				log.Dbg("< %d byte%s and EOF", size, log.GetPlural(size))
+			}
+		}
+	} else if err != nil {
 		log.Dbg("reading response body stream failed: %v", err)
-		return "", "", nil, 0, 0, fmt.Errorf("reading response body stream failed: %v", err)
+		return "", "", "", nil, 0, 0, fmt.Errorf("reading response body stream failed: %v", err)
 	} else {
 		if log.IsDbg {
 			log.Dbg("< %d byte%s", size, log.GetPlural(size))
@@ -237,7 +258,7 @@ func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, f
 		if err = json.Unmarshal(resBody, partialData); err != nil {
 			log.Dbg("receive response %s", resBody)
 			log.Dbg("decoding response body failed: %v", err)
-			return "", "", rest, 0, 0, errors.New("decoding response body failed")
+			return "", "", "", rest, 0, 0, errors.New("decoding response body failed")
 		}
 	}
 	if final {
@@ -245,25 +266,30 @@ func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, f
 		if !ok {
 			log.Ftl("invalid gemini final response type")
 		}
+		thoughts := ""
 		answer := ""
 		reason := ""
 		if len(output.Candidates) > 0 {
 			candidate := output.Candidates[0]
 			parts := candidate.Content.Parts
-			if len(parts) > 0 {
-				answer = parts[0].Text
+			for _, part := range parts {
+				if part.Thought {
+					thoughts += part.Text
+				} else {
+					answer += part.Text
+				}
 			}
 			reason = candidate.FinishReason
 		}
 		if len(reason) > 0 {
 			metadata := output.UsageMetadata
-			return answer, reason, rest, metadata.PromptTokenCount, metadata.CandidatesTokenCount, nil
+			return thoughts, answer, reason, rest, metadata.PromptTokenCount, metadata.CandidatesTokenCount, nil
 		}
 	}
 	if err = json.Unmarshal(resBody, partialData); err != nil {
 		log.Dbg("receive response %s", resBody)
 		log.Dbg("decoding response body failed: %v", err)
-		return "", "", rest, 0, 0, errors.New("decoding response body failed")
+		return "", "", "", rest, 0, 0, errors.New("decoding response body failed")
 	}
 	if log.IsDbg {
 		var resLog bytes.Buffer
@@ -278,15 +304,20 @@ func extractStreamGeminiResponse(resReader io.Reader, partialData interface{}, f
 	if !ok {
 		log.Ftl("invalid gemini partial response type")
 	}
+	thoughts := ""
 	answer := ""
 	if len(output.Candidates) > 0 {
 		candidate := output.Candidates[0]
 		parts := candidate.Content.Parts
-		if len(parts) > 0 {
-			answer = parts[0].Text
+		for _, part := range parts {
+			if part.Thought {
+				thoughts += part.Text
+			} else {
+				answer += part.Text
+			}
 		}
 	}
-	return answer, "", rest, 0, 0, nil
+	return thoughts, answer, "", rest, 0, 0, nil
 }
 
 type tokenCount struct {
@@ -301,6 +332,7 @@ type tokenMetadata struct {
 type generateResponse struct {
 	Model     string `json:"model"`
 	CreatedAt string `json:"created_at"`
+	Thinking  string `json:"thinking,omitempty"`
 	Response  string `json:"response"`
 	Done      bool   `json:"done"`
 }
@@ -323,6 +355,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			Temperature: -1,
 			TopP:        -1,
 		},
+		Think:  false,
 		Stream: true,
 	}
 	reqPayload, err := io.ReadAll(r.Body)
@@ -379,6 +412,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 		w.WriteHeader(status)
 		var rest []byte
 		for {
+			var thinking string
 			var content string
 			var reason string
 			var promptTokens int
@@ -389,7 +423,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			} else {
 				reader = resReader
 			}
-			content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
+			thinking, content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
 			var resBody any
 			final := false
 			if err != nil {
@@ -401,6 +435,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 					generateResponse: generateResponse{
 						Model:     input.Model,
 						CreatedAt: time.Now().UTC().Format(time.RFC3339),
+						Thinking:  thinking,
 						Response:  content,
 						Done:      true,
 					},
@@ -417,6 +452,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 				resBody = &generateResponse{
 					Model:     input.Model,
 					CreatedAt: time.Now().UTC().Format(time.RFC3339),
+					Thinking:  thinking,
 					Response:  content,
 					Done:      false,
 				}
@@ -439,7 +475,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(status)
-		content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
+		thinking, content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
 		tokens := promptTokens + contentTokens
 		if log.IsDbg {
 			log.Dbg("< result by %s with %d character%s and %d token%s", input.Model,
@@ -450,6 +486,7 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			generateResponse: generateResponse{
 				Model:     input.Model,
 				CreatedAt: time.Now().UTC().Format(time.RFC3339),
+				Thinking:  thinking,
 				Response:  content,
 				Done:      true,
 			},

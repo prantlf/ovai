@@ -9,11 +9,18 @@ import (
 	"github.com/prantlf/ovai/internal/log"
 )
 
+type ThinkingConfig struct {
+	IncludeThoughts bool `json:"includeThoughts"`
+	ThinkingBudget  int  `json:"thinkingBudget,omitempty"` // flash: 0-2456, pro: 128-32768
+}
+
 type GenerationConfig struct {
-	MaxOutputTokens int     `json:"maxOutputTokens"`
-	Temperature     float64 `json:"temperature"`
-	TopP            float64 `json:"topP"`
-	TopK            int     `json:"topK"`
+	MaxOutputTokens int            `json:"maxOutputTokens"`
+	Temperature     float64        `json:"temperature"`
+	TopP            float64        `json:"topP"`
+	TopK            int            `json:"topK"`
+	Scope           string         `json:"scope,omitempty"`
+	ThinkingConfig  ThinkingConfig `json:"thinkingConfig,omitempty"`
 }
 
 type SafetySetting struct {

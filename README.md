@@ -137,6 +137,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
   "model": "gemini-2.0-flash-001",
   "prompt": "Describe guilds from Dungeons and Dragons.",
   "images": [],
+  "think": false,
   "stream": false
 }'
 
@@ -154,14 +155,17 @@ Generates a text using the specified prompt. See the available [gemini text and 
 }
 ```
 
-The property `stream` defaults to be `true`. The property `options` is optional with the following defaults:
+The property `stream` defaults to be `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
 
 ```
 "options": {
   "num_predict": 8192,
   "temperature": 1,
   "top_p": 0.95,
-  "top_k": 40
+  "top_k": 40,
+  // available only for gemini-2.5-flash: 0-2456
+  //             or for gemini-2.5-pro:   128-32768
+  "thinking_budget": 0
 }
 ```
 
@@ -183,6 +187,7 @@ Replies to a chat with the specified message history. See the available [gemini 
       "images": []
     }
   ],
+  "think": false,
   "stream": false
 }'
 
@@ -203,14 +208,17 @@ Replies to a chat with the specified message history. See the available [gemini 
 }
 ```
 
-The property `stream` defaults to `true`. The property `options` is optional with the following defaults:
+The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
 
-```
+```jsonc
 "options": {
   "num_predict": 8192,
   "temperature": 1,
   "top_p": 0.95,
-  "top_k": 40
+  "top_k": 40,
+  // available only for gemini-2.5-flash: 0-2456
+  //             or for gemini-2.5-pro:   128-32768
+  "thinking_budget": 0
 }
 ```
 

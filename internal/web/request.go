@@ -220,7 +220,7 @@ func DispatchRequest(req *http.Request, output interface{}) (int, error) {
 		var resLog bytes.Buffer
 		if errLog := json.Indent(&resLog, resBody, "", "  "); errLog != nil {
 			log.Net("receive %d: %s %s\n with response %s", res.StatusCode, req.Method, req.URL, resBody)
-			// log.Printf("receive %d: %s %s\n with response %+v", res.StatusCode, req.Method, req.URL, output)
+			// log.Net("receive %d: %s %s\n with response %+v", res.StatusCode, req.Method, req.URL, output)
 		} else {
 			log.Net("receive %d: %s %s\n with response %s", res.StatusCode, req.Method, req.URL, resLog.Bytes())
 		}
@@ -273,6 +273,7 @@ func DispatchRawRequest(req *http.Request) (int, []byte, error) {
 		var resLog bytes.Buffer
 		if errLog := json.Indent(&resLog, resBody, "", "  "); errLog != nil {
 			log.Net("receive %d: %s %s\n with response %s", status, req.Method, req.URL, resBody)
+			// log.Net("receive %d: %s %s\n with response %+v", status, req.Method, req.URL, output)
 		} else {
 			log.Net("receive %d: %s %s\n with response %s", status, req.Method, req.URL, resLog.Bytes())
 		}

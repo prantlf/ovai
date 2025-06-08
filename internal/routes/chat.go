@@ -16,14 +16,16 @@ import (
 )
 
 type message struct {
-	Role    string   `json:"role"`
-	Content string   `json:"content"`
-	Images  []string `json:"images"`
+	Role     string   `json:"role"`
+	Content  string   `json:"content"`
+	Thinking string   `json:"thinking,omitempty"`
+	Images   []string `json:"images"`
 }
 
 type chatInput struct {
 	Model    string          `json:"model"`
 	Messages []message       `json:"messages"`
+	Think    bool            `json:"think"`
 	Stream   bool            `json:"stream"`
 	Options  modelParameters `json:"options"`
 }
@@ -71,6 +73,11 @@ func createChatGeminiBody(input *chatInput) (interface{}, error) {
 		return nil, err
 	}
 	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
+	if input.Think {
+		generationConfig.ThinkingConfig = cfg.ThinkingConfig{
+			IncludeThoughts: true,
+		}
+	}
 	mergeParameters(&generationConfig, &input.Options)
 	body := &geminiBody{
 		Contents:         chatMessages,
@@ -122,6 +129,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			Temperature: -1,
 			TopP:        -1,
 		},
+		Think:  false,
 		Stream: true,
 	}
 	reqPayload, err := io.ReadAll(r.Body)
@@ -178,6 +186,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		w.WriteHeader(status)
 		var rest []byte
 		for {
+			var thinking string
 			var content string
 			var reason string
 			var promptTokens int
@@ -188,7 +197,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			} else {
 				reader = resReader
 			}
-			content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
+			thinking, content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
 			var resBody any
 			final := false
 			if err != nil {
@@ -201,8 +210,9 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 						Model:     input.Model,
 						CreatedAt: time.Now().UTC().Format(time.RFC3339),
 						Message: message{
-							Role:    "assistant",
-							Content: content,
+							Role:     "assistant",
+							Thinking: thinking,
+							Content:  content,
 						},
 						Done: true,
 					},
@@ -220,8 +230,9 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 					Model:     input.Model,
 					CreatedAt: time.Now().UTC().Format(time.RFC3339),
 					Message: message{
-						Role:    "assistant",
-						Content: content,
+						Role:     "assistant",
+						Thinking: thinking,
+						Content:  content,
 					},
 					Done: false,
 				}
@@ -242,7 +253,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		if err != nil {
 			return failRequest(w, status, err.Error())
 		}
-		content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
+		thinking, content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
 		tokens := promptTokens + contentTokens
 		if log.IsDbg {
 			log.Dbg("< answer by %s with %d character%s and %d token%s", input.Model,
@@ -254,8 +265,9 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 				Model:     input.Model,
 				CreatedAt: time.Now().UTC().Format(time.RFC3339),
 				Message: message{
-					Role:    "assistant",
-					Content: content,
+					Role:     "assistant",
+					Thinking: thinking,
+					Content:  content,
 				},
 				Done: true,
 			},

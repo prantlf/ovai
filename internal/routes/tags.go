@@ -35,6 +35,45 @@ type tagsOutput struct {
 
 var googleModels = []modelInfo{
 	{
+		Name:       "gemini-2.5-flash-lite-preview-06-17",
+		Model:      "gemini-2.5-flash-lite-preview-06-17",
+		ModifiedAt: "2025-06-17T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-flash-lite",
+			Families: []string{
+				"gemini-2.5-flash-lite",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
+	{
+		Name:       "gemini-2.5-pro",
+		Model:      "gemini-2.5-pro",
+		ModifiedAt: "2025-06-17T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-pro",
+			Families: []string{
+				"gemini-2.5-pro",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2025-06-17T00:00:00.000Z",
+	},
+	{
+		Name:       "gemini-2.5-flash",
+		Model:      "gemini-2.5-flash",
+		ModifiedAt: "2025-06-17T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-flash",
+			Families: []string{
+				"gemini-2.5-flash",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2025-06-17T00:00:00.000Z",
+	},
+	{
 		Name:       "gemini-2.5-pro-preview-06-05",
 		Model:      "gemini-2.5-pro-preview-06-05",
 		ModifiedAt: "2025-01-01T00:00:00.000Z",
@@ -228,6 +267,19 @@ var googleModels = []modelInfo{
 			Purposes: []string{"chat", "generate"},
 		},
 		ExpiresAt: "2025-02-15T00:00:00.000Z",
+	},
+	{
+		Name:       "gemini-embedding-001",
+		Model:      "gemini-embedding-001",
+		ModifiedAt: "2025-05-20T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-embedding",
+			Families: []string{
+				"gemini-embedding",
+			},
+			Purposes: []string{"embeddings"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
 	},
 	{
 		Name:       "multimodalembedding@001",

@@ -8,7 +8,7 @@ Get embeddings for a text:
 
 ```
 ❯ curl localhost:22434/api/embed -d '{
-  "model": "text-embedding-005",
+  "model": "gemini-embedding-001",
   "input": "Half-orc is the best race for a barbarian."
 }'
 
@@ -134,7 +134,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
 
 ```
 ❯ curl localhost:22434/api/generate -d '{
-  "model": "gemini-2.0-flash-001",
+  "model": "gemini-2.5-flash",
   "prompt": "Describe guilds from Dungeons and Dragons.",
   "images": [],
   "think": false,
@@ -142,7 +142,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
 }'
 
 {
-  "model": "gemini-2.0-flash-001",
+  "model": "gemini-2.5-flash",
   "created_at": "2024-05-10T14:10:54.885Z",
   "response": "Guilds serve as organizations that bring together individuals with ...",
   "done": true,
@@ -175,7 +175,7 @@ Replies to a chat with the specified message history. See the available [gemini 
 
 ```
 ❯ curl localhost:22434/api/chat -d '{
-  "model": "gemini-2.0-pro",
+  "model": "gemini-2.5-flash",
   "messages": [
     {
       "role": "system",
@@ -192,7 +192,7 @@ Replies to a chat with the specified message history. See the available [gemini 
 }'
 
 {
-  "model": "gemini-2.0-pro",
+  "model": "gemini-2.5-flash",
   "created_at": "2024-05-06T23:32:05.219Z",
   "message": {
     "role": "assistant",
@@ -300,9 +300,9 @@ Gracefully shuts down the HTTP server and exits the process.
 
 ## Vertex AI
 
-Recognised models for embeddings: textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, text-embedding-005, multimodalembedding@001.
+Recognised models for embeddings: gemini-embedding-001, textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, text-embedding-005, multimodalembedding@001.
 
-Recognised models for content generation and chat: gemini-2.5-pro-preview-06-05, gemini-2.5-flash-preview-05-20, gemini-2.5-pro-exp-03-25, gemini-2.0-flash, gemini-2.0-flash-lite, gemini-2.0-flash-exp, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
+Recognised models for content generation and chat: gemini-2.5-flash-lite-preview-06-17, gemini-2.5-pro, gemini-2.5-flash, gemini-2.5-pro-preview-06-05, gemini-2.5-flash-preview-05-20, gemini-2.5-pro-exp-03-25, gemini-2.0-flash-thinking-exp-01-21, gemini-2.0-flash, gemini-2.0-flash-lite, gemini-2.0-flash-exp, gemini-1.5-flash-001, gemini-1.5-flash-002, gemini-1.5-flash-8b-001, gemini-1.5-pro-001, gemini-1.5-pro-002, gemini-1.0-pro-vision-001, gemini-1.0-pro-001, gemini-1.0-pro-002.
 
 ### Ollama
 

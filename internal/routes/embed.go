@@ -72,7 +72,8 @@ func HandleEmbed(w http.ResponseWriter, r *http.Request) int {
 		strings.HasPrefix(input.Model, "textembedding-gecko-multilingual") ||
 		strings.HasPrefix(input.Model, "text-embedding") ||
 		strings.HasPrefix(input.Model, "multimodalembedding") ||
-		strings.HasPrefix(input.Model, "text-multilingual-embedding") {
+		strings.HasPrefix(input.Model, "text-multilingual-embedding") ||
+		strings.HasPrefix(input.Model, "gemini-embedding") {
 		forward = true
 	} else if !canProxy {
 		return wrongInput(w, fmt.Sprintf("unrecognised model %q", input.Model))

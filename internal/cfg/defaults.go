@@ -11,14 +11,14 @@ import (
 
 type ThinkingConfig struct {
 	IncludeThoughts bool `json:"includeThoughts"`
-	ThinkingBudget  int  `json:"thinkingBudget,omitempty"` // flash: 0-2456, pro: 128-32768
+	ThinkingBudget  *int `json:"thinkingBudget,omitempty"` // flash: 0-2456, pro: 128-32768
 }
 
 type GenerationConfig struct {
-	MaxOutputTokens int            `json:"maxOutputTokens"`
-	Temperature     float64        `json:"temperature"`
-	TopP            float64        `json:"topP"`
-	TopK            int            `json:"topK"`
+	MaxOutputTokens *int           `json:"maxOutputTokens,omitempty"`
+	Temperature     *float64       `json:"temperature,omitempty"`
+	TopP            *float64       `json:"topP,omitempty"`
+	TopK            *int           `json:"topK,omitempty"`
 	Scope           string         `json:"scope,omitempty"`
 	ThinkingConfig  ThinkingConfig `json:"thinkingConfig,omitempty"`
 }
@@ -45,17 +45,23 @@ var builtins []byte
 var Defaults = readDefaults()
 
 func mergeParameters(target *GenerationConfig, source *GenerationConfig) {
-	if source.MaxOutputTokens > 0 {
+	if source.MaxOutputTokens != nil {
 		target.MaxOutputTokens = source.MaxOutputTokens
 	}
-	if source.Temperature >= 0 {
+	if source.Temperature != nil {
 		target.Temperature = source.Temperature
 	}
-	if source.TopP >= 0 {
+	if source.TopP != nil {
 		target.TopP = source.TopP
 	}
-	if source.TopK > 0 {
+	if source.TopK != nil {
 		target.TopK = source.TopK
+	}
+	if len(source.Scope) > 0 {
+		target.Scope = source.Scope
+	}
+	if source.ThinkingConfig.ThinkingBudget != nil {
+		target.ThinkingConfig.ThinkingBudget = source.ThinkingConfig.ThinkingBudget
 	}
 }
 
@@ -88,10 +94,7 @@ func readDefaults() *defaults {
 	} else {
 		over := defaults{
 			GeminiDefaults: geminiDefaults{
-				GenerationConfig: GenerationConfig{
-					Temperature: -1,
-					TopP:        -1,
-				},
+				GenerationConfig: GenerationConfig{},
 			},
 		}
 		if err := json.Unmarshal(defaultsJson, &over); err != nil {

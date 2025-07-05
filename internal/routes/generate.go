@@ -17,11 +17,11 @@ import (
 )
 
 type modelParameters struct {
-	MaxOutputTokens int     `json:"num_predict"`
-	Temperature     float64 `json:"temperature"`
-	TopP            float64 `json:"top_p"`
-	TopK            int     `json:"top_k"`
-	ThinkingBudget  int     `json:"thinking_budget"`
+	MaxOutputTokens *int     `json:"num_predict,omitempty"`
+	Temperature     *float64 `json:"temperature,omitempty"`
+	TopP            *float64 `json:"top_p,omitempty"`
+	TopK            *int     `json:"top_k,omitempty"`
+	ThinkingBudget  *int     `json:"thinking_budget,omitempty"`
 }
 
 type generateInput struct {
@@ -153,19 +153,19 @@ func (o *geminiFinalOutput) GetCandidates() []geminiCandidate {
 }
 
 func mergeParameters(target *cfg.GenerationConfig, source *modelParameters) {
-	if source.MaxOutputTokens > 0 {
+	if source.MaxOutputTokens != nil {
 		target.MaxOutputTokens = source.MaxOutputTokens
 	}
-	if source.Temperature >= 0 {
+	if source.Temperature != nil {
 		target.Temperature = source.Temperature
 	}
-	if source.TopP >= 0 {
+	if source.TopP != nil {
 		target.TopP = source.TopP
 	}
-	if source.TopK > 0 {
+	if source.TopK != nil {
 		target.TopK = source.TopK
 	}
-	if source.ThinkingBudget > 0 {
+	if source.ThinkingBudget != nil {
 		target.ThinkingConfig.ThinkingBudget = source.ThinkingBudget
 	}
 }
@@ -408,12 +408,9 @@ type generateCompleteResponse struct {
 
 func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	input := generateInput{
-		Options: modelParameters{
-			Temperature: -1,
-			TopP:        -1,
-		},
-		Think:  false,
-		Stream: true,
+		Options: modelParameters{},
+		Think:   false,
+		Stream:  true,
 	}
 	reqPayload, err := io.ReadAll(r.Body)
 	if err != nil {

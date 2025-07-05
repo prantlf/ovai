@@ -155,8 +155,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
 }
 ```
 
-The property `stream` defaults to be `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
-
+The property `stream` defaults to be `true`. The property `think` defaults to `false`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
 ```
 "options": {
   "num_predict": 8192,
@@ -208,7 +207,7 @@ Replies to a chat with the specified message history. See the available [gemini 
 }
 ```
 
-The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
+The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
 
 ```
 "options": {
@@ -358,7 +357,7 @@ An extension to chat that requests information from a local function, which can 
 }
 ```
 
-The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
+The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
 
 ```
 "options": {

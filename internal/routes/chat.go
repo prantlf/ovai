@@ -171,12 +171,9 @@ func convertFunctionCallsToToolCalls(functionCalls []functionCall) []toolCall {
 
 func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	input := chatInput{
-		Options: modelParameters{
-			Temperature: -1,
-			TopP:        -1,
-		},
-		Think:  false,
-		Stream: true,
+		Options: modelParameters{},
+		Think:   false,
+		Stream:  true,
 	}
 	reqPayload, err := io.ReadAll(r.Body)
 	if err != nil {

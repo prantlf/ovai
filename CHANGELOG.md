@@ -1,5 +1,28 @@
 # Changes
 
+## [0.16.0](https://github.com/prantlf/ovai/compare/v0.15.0...v0.16.0) (2025-07-05)
+
+### Features
+
+* Recognise gemini-2.5-flash-preview-05-20 and gemini-2.5-pro-preview-06-05 ([6e4c531](https://github.com/prantlf/ovai/commit/6e4c531a5f98412a2e1b2f6ca34f50da172994d1))
+* Support enabling thinking ([74360f5](https://github.com/prantlf/ovai/commit/74360f579d994a298edf59be2534972f7ed66f1e))
+* Recognise gemini-embedding-001, gemini-2.5-flash, gemini-2.5-pro and gemini-2.5-flash-lite-preview-06-17 ([25f8b9b](https://github.com/prantlf/ovai/commit/25f8b9b29876c85cf9d68da0f13d213da3d4c8a3))
+* Support tools - function calls ([11a9548](https://github.com/prantlf/ovai/commit/11a9548d67f14ae3b7a6ed5134df9c2c650e80cc))
+* Support JSONC in model-defaults.json and google-account.json ([707245f](https://github.com/prantlf/ovai/commit/707245fbf90dd3e0580bbc3e68d98e76030e90fb))
+
+### Bug Fixes
+
+* Do not set any model defaults when forwarding the requests ([9a383d3](https://github.com/prantlf/ovai/commit/9a383d365a5dd5739da5f9e5b5748c27ff4d6a3f))
+
+### BREAKING CHANGES
+
+There were default values for the Gemini models
+in the code: `maxOutputTokens: 1024` and temperature: 0.5`. They
+were removed in favour of the Gemini defaults as implemented
+in the model itself. If you depended on the specific values,
+set them explicitely in `generationConfig` in `model-defaults.json`
+or in `options` when making the request to the Ollama REST API.
+
 ## [0.15.0](https://github.com/prantlf/ovai/compare/v0.14.1...v0.15.0) (2025-04-11)
 
 ### Features

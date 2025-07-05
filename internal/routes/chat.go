@@ -15,16 +15,33 @@ import (
 	"github.com/prantlf/ovai/internal/log"
 )
 
+type function struct {
+	Name      string            `json:"name"`
+	Arguments map[string]string `json:"arguments"`
+}
+
+type toolCall struct {
+	Function function `json:"function"`
+}
+
 type message struct {
-	Role     string   `json:"role"`
-	Content  string   `json:"content"`
-	Thinking string   `json:"thinking,omitempty"`
-	Images   []string `json:"images"`
+	Role      string     `json:"role"`
+	Tool      string     `json:"tool,omitempty"`
+	Content   string     `json:"content"`
+	Thinking  string     `json:"thinking,omitempty"`
+	Images    []string   `json:"images"`
+	ToolCalls []toolCall `json:"tool_calls,omitempty"`
+}
+
+type FunctionTool struct {
+	Type     string      `json:"type"`
+	Function interface{} `json:"function"`
 }
 
 type chatInput struct {
 	Model    string          `json:"model"`
 	Messages []message       `json:"messages"`
+	Tools    []FunctionTool  `json:"tools"`
 	Think    bool            `json:"think"`
 	Stream   bool            `json:"stream"`
 	Options  modelParameters `json:"options"`
@@ -40,18 +57,20 @@ func convertGeminiMessages(messages []message) ([]geminiContent, error) {
 			})
 		} else {
 			var role string
-			if msg.Role == "user" {
+			switch msg.Role {
+			case "user":
 				role = "user"
-			} else if msg.Role == "assistant" {
+			case "assistant":
 				role = "model"
-			} else {
+			case "tool":
+				role = "user"
+			default:
 				return nil, fmt.Errorf("invalid chat message role: %q", msg.Role)
 			}
-			parts, err := createGeminiParts(msg.Content, msg.Images)
+			parts, err := createGeminiParts(msg.Content, msg.Images, msg.ToolCalls, msg.Tool)
 			if err != nil {
 				return nil, err
 			}
-			parts[0].Text = msg.Content
 			chatMessages = append(chatMessages, geminiContent{
 				Role:  role,
 				Parts: parts,
@@ -79,10 +98,24 @@ func createChatGeminiBody(input *chatInput) (interface{}, error) {
 		}
 	}
 	mergeParameters(&generationConfig, &input.Options)
+	var tools []toolsWrapper
+	toolCount := len(input.Tools)
+	if toolCount > 0 {
+		functions := make([]interface{}, toolCount)
+		for i, function := range input.Tools {
+			functions[i] = function.Function
+		}
+		tools = []toolsWrapper{
+			{
+				FunctionDeclarations: functions,
+			},
+		}
+	}
 	body := &geminiBody{
 		Contents:         chatMessages,
 		GenerationConfig: generationConfig,
 		SafetySettings:   cfg.Defaults.GeminiDefaults.SafetySettings,
+		Tools:            tools,
 	}
 	return body, nil
 }
@@ -121,6 +154,19 @@ type chatCompleteResponse struct {
 	PromptEvalDuration int64  `json:"prompt_eval_duration"`
 	EvalCount          int    `json:"eval_count"`
 	EvalDuration       int64  `json:"eval_duration"`
+}
+
+func convertFunctionCallsToToolCalls(functionCalls []functionCall) []toolCall {
+	toolCalls := make([]toolCall, len(functionCalls))
+	for i, functionCall := range functionCalls {
+		toolCalls[i] = toolCall{
+			Function: function{
+				Name:      functionCall.Name,
+				Arguments: functionCall.Args,
+			},
+		}
+	}
+	return toolCalls
 }
 
 func HandleChat(w http.ResponseWriter, r *http.Request) int {
@@ -186,8 +232,12 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		w.WriteHeader(status)
 		var rest []byte
 		for {
+			if f, ok := w.(http.Flusher); ok {
+				f.Flush()
+			}
 			var thinking string
 			var content string
+			var functionCalls []functionCall
 			var reason string
 			var promptTokens int
 			var contentTokens int
@@ -197,12 +247,13 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			} else {
 				reader = resReader
 			}
-			thinking, content, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
+			thinking, content, functionCalls, reason, rest, promptTokens, contentTokens, err = extractStreamGeminiResponse(reader, partialOutput, finalOutput)
 			var resBody any
 			final := false
 			if err != nil {
 				break
 			} else if len(reason) > 0 {
+				toolCalls := convertFunctionCallsToToolCalls(functionCalls)
 				duration := time.Since(start)
 				promptDuration := int64(math.Round(float64(int64(duration) / 4)))
 				resBody = &chatCompleteResponse{
@@ -210,9 +261,10 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 						Model:     input.Model,
 						CreatedAt: time.Now().UTC().Format(time.RFC3339),
 						Message: message{
-							Role:     "assistant",
-							Thinking: thinking,
-							Content:  content,
+							Role:      "assistant",
+							Thinking:  thinking,
+							Content:   content,
+							ToolCalls: toolCalls,
 						},
 						Done: true,
 					},
@@ -226,13 +278,15 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 				}
 				final = true
 			} else {
+				toolCalls := convertFunctionCallsToToolCalls(functionCalls)
 				resBody = &chatResponse{
 					Model:     input.Model,
 					CreatedAt: time.Now().UTC().Format(time.RFC3339),
 					Message: message{
-						Role:     "assistant",
-						Thinking: thinking,
-						Content:  content,
+						Role:      "assistant",
+						Thinking:  thinking,
+						Content:   content,
+						ToolCalls: toolCalls,
 					},
 					Done: false,
 				}
@@ -253,21 +307,23 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 		if err != nil {
 			return failRequest(w, status, err.Error())
 		}
-		thinking, content, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
+		thinking, content, functionCalls, reason, promptTokens, contentTokens := extractCompleteGeminiResponse(output)
 		tokens := promptTokens + contentTokens
 		if log.IsDbg {
 			log.Dbg("< answer by %s with %d character%s and %d token%s", input.Model,
 				len(content), log.GetPlural(len(content)), tokens, log.GetPlural(tokens))
 		}
+		toolCalls := convertFunctionCallsToToolCalls(functionCalls)
 		promptDuration := int64(math.Round(float64(int64(duration) / 4)))
 		resBody := &chatCompleteResponse{
 			chatResponse: chatResponse{
 				Model:     input.Model,
 				CreatedAt: time.Now().UTC().Format(time.RFC3339),
 				Message: message{
-					Role:     "assistant",
-					Thinking: thinking,
-					Content:  content,
+					Role:      "assistant",
+					Thinking:  thinking,
+					Content:   content,
+					ToolCalls: toolCalls,
 				},
 				Done: true,
 			},

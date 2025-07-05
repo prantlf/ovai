@@ -210,7 +210,157 @@ Replies to a chat with the specified message history. See the available [gemini 
 
 The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
 
-```jsonc
+```
+"options": {
+  "num_predict": 8192,
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40,
+  // available only for gemini-2.5-flash: 0-2456
+  //             or for gemini-2.5-pro:   128-32768
+  "thinking_budget": 0
+}
+```
+
+### Tools
+
+An extension to chat that requests information from a local function, which can be used for formulating an answer.
+
+```
+❯ curl localhost:22434/api/chat -d '{
+  "model": "gemini-2.5-flash",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert on Dungeons and Dragons."
+    },
+    {
+      "role": "user",
+      "content": "Is the the initial HP of barbarian higher than 50?"
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_hp_by_class",
+        "description": "This tool returns the initial health points (HP) for the specified character class.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Generate one character class from the user request for the health points (HP)"
+            }
+          },
+          "required": ["class"]
+        }
+      }
+    }
+  ],
+  "think": false,
+  "stream": false
+}'
+
+{
+  "model": "gemini-2.5-flash",
+  "created_at": "2024-05-06T23:32:05.219Z",
+  "message": {
+    "role": "assistant",
+    "content": "Let's call a tool for computing the initial HP of barbarian."
+    "tool_calls": [
+      {
+        "function": {
+          "name": "get_hp_by_class",
+          "arguments": {
+            "keyword": "barbarian"
+          }
+        }
+      }
+    ],
+  },
+  "done": true,
+  "total_duration": 2325524053,
+  "load_duration": 0,
+  "prompt_eval_count": 9,
+  "prompt_eval_duration: 581381013,
+  "eval_count: 292,
+  "eval_duration: 1744143040
+}
+
+❯ curl localhost:22434/api/chat -d '{
+  "model": "gemini-2.5-flash",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert on Dungeons and Dragons."
+    },
+    {
+      "role": "user",
+      "content": "What are the initial HP of barbarian?"
+    },
+    {
+      "role": "assistant",
+      "content": "Let's call a tool for computing the initial HP of barbarian."
+      "tool_calls": [
+        {
+          "function": {
+            "name": "get_hp_by_class",
+            "arguments": {
+              "keyword": "barbarian"
+            }
+          }
+        }
+      ],
+    },
+    {
+      "role": "tool",
+      "content": "The initial HP of barbarian is 80."
+    }
+  ],
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "get_hp_by_class",
+        "description": "This tool returns the initial health points (HP) for the specified character class.",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "class": {
+              "type": "string",
+              "description": "Generate one character class from the user request for the health points (HP)"
+            }
+          },
+          "required": ["class"]
+        }
+      }
+    }
+  ],
+  "think": false,
+  "stream": false
+}'
+
+{
+  "model": "gemini-2.5-flash",
+  "created_at": "2024-05-06T23:32:05.219Z",
+  "message": {
+    "role": "assistant",
+    "content": "Yes, the initial HP of barbarian is higher than 50. It's 80."
+  },
+  "done": true,
+  "total_duration": 2325524053,
+  "load_duration": 0,
+  "prompt_eval_count": 9,
+  "prompt_eval_duration: 581381013,
+  "eval_count: 292,
+  "eval_duration: 1744143040
+}
+```
+
+The property `stream` defaults to `true`. The property `think` defaults to `false`. The property `options` is optional with the following defaults:
+
+```
 "options": {
   "num_predict": 8192,
   "temperature": 1,

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/prantlf/ovai/internal/log"
+	"github.com/tidwall/jsonc"
 )
 
 type ThinkingConfig struct {
@@ -84,6 +85,7 @@ func readDefaults() *defaults {
 		defaultsFile = "model-defaults.json"
 	}
 	var deflts defaults
+	jsonc.ToJSONInPlace(builtins)
 	if err := json.Unmarshal(builtins, &deflts); err != nil {
 		log.Ftl("decoding built-in defaults failed: %v", err)
 	}
@@ -97,6 +99,7 @@ func readDefaults() *defaults {
 				GenerationConfig: GenerationConfig{},
 			},
 		}
+		jsonc.ToJSONInPlace(defaultsJson)
 		if err := json.Unmarshal(defaultsJson, &over); err != nil {
 			log.Ftl("decoding %s failed: %v", defaultsFile, err)
 		}

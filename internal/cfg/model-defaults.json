@@ -1,8 +1,23 @@
 {
   "apiLocation": "us-central1",
   "apiEndpoint": "us-central1-aiplatform.googleapis.com",
+  // An alternative for the global Google servers:
+  // "apiLocation": "global",
+  // "apiEndpoint": "aiplatform.googleapis.com",
   "geminiDefaults": {
-    "generationConfig": {},
+    // The following values are examples, they are not set by default,
+    // leaving the default behaviour on the Goole implementation:
+    "generationConfig": {
+      // "maxOutputTokens": 8192,
+      // "temperature": 1,
+      // "topP": 0.95,
+      // "topK": 40,
+      // "scope": "https://www.googleapis.com/auth/cloud-platform",
+      // "thinkingConfig: {
+      //   includeThoughts: true,
+      //   thinkingBudget: 1024
+      // }
+    },
     "safetySettings": [
       {
         "category": "HARM_CATEGORY_HATE_SPEECH",

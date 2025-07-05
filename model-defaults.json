@@ -1,5 +1,17 @@
 {
+  "apiLocation": "global",
+  "apiEndpoint": "aiplatform.googleapis.com",
   "geminiDefaults": {
-    "generationConfig": {}
+    "generationConfig": {
+      // "maxOutputTokens": 8192,
+      // "temperature": 1,
+      // "topP": 0.95,
+      // "topK": 40,
+      // "scope": "https://www.googleapis.com/auth/cloud-platform",
+      // "thinkingConfig: {
+      //   includeThoughts: true,
+      //   thinkingBudget: 1024
+      // }
+    }
   }
 }

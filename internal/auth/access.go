@@ -7,6 +7,7 @@ import (
 
 	"github.com/prantlf/ovai/internal/log"
 	"github.com/prantlf/ovai/internal/web"
+	"github.com/tidwall/jsonc"
 )
 
 type request struct {
@@ -29,13 +30,14 @@ func readAccount() *account {
 	if len(accntFile) == 0 {
 		accntFile = "google-account.json"
 	}
-	log.Dbg("open %s", accntFile)
-	accountFile, err := os.Open(accntFile)
+	log.Dbg("read %s", accntFile)
+	accntJson, err := os.ReadFile(accntFile)
 	if err != nil {
-		log.Ftl("opening %s failed: %v", accntFile, err)
+		log.Ftl("reading %s failed: %v", accntFile, err)
 	}
 	var accnt account
-	if err := json.NewDecoder(accountFile).Decode(&accnt); err != nil {
+	jsonc.ToJSONInPlace(accntJson)
+	if err := json.Unmarshal(accntJson, &accnt); err != nil {
 		log.Ftl("decoding %s failed: %v", accntFile, err)
 	}
 	if len(accnt.Scope) == 0 {

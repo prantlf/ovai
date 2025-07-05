@@ -28,6 +28,8 @@ Get embeddings for a text:
 Listening on http://localhost:22434 ...
 ```
 
+Files `model-defaults.json` and `google-account.json` have to be in either JSON or JSONC formats.
+
 ### Configuring
 
 The following properties from `google-account.json` are used:
@@ -40,6 +42,51 @@ The following properties from `google-account.json` are used:
   "client_email": "...",
   "scope": "https://www.googleapis.com/auth/cloud-platform", // optional, can be missing
   "auth_uri": "https://www.googleapis.com/oauth2/v4/token"   // optional, can be missing
+}
+```
+
+The content of the built-in `model-defaults.json`, which your local `model-defaults.json` will be merged to, if provided. (Properties in `generationConfig` are not set, you can set them in your local `model-defaults.json`.):
+
+```jsonc
+{
+  "apiLocation": "us-central1",
+  "apiEndpoint": "us-central1-aiplatform.googleapis.com",
+  // An alternative for the global Google servers:
+  // "apiLocation": "global",
+  // "apiEndpoint": "aiplatform.googleapis.com",
+  "geminiDefaults": {
+    "generationConfig": {
+      // The following values are examples, they are not set by default,
+      // leaving the default behaviour on the Goole implementation:
+      // "maxOutputTokens": 8192,
+      // "temperature": 1,
+      // "topP": 0.95,
+      // "topK": 40,
+      // "scope": "https://www.googleapis.com/auth/cloud-platform",
+      // "thinkingConfig: {
+      //   includeThoughts: true,
+      //   thinkingBudget: 1024
+      // }
+    },
+    "safetySettings": [
+      {
+        "category": "HARM_CATEGORY_HATE_SPEECH",
+        "threshold": "BLOCK_ONLY_HIGH"
+      },
+      {
+        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+        "threshold": "BLOCK_ONLY_HIGH"
+      },
+      {
+        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+        "threshold": "BLOCK_ONLY_HIGH"
+      },
+      {
+        "category": "HARM_CATEGORY_HARASSMENT",
+        "threshold": "BLOCK_ONLY_HIGH"
+      }
+    ]
+  }
 }
 ```
 

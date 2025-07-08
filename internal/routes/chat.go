@@ -26,7 +26,7 @@ type toolCall struct {
 
 type message struct {
 	Role      string     `json:"role"`
-	Tool      string     `json:"tool,omitempty"`
+	ToolName  string     `json:"tool_name,omitempty"`
 	Content   string     `json:"content"`
 	Thinking  string     `json:"thinking,omitempty"`
 	Images    []string   `json:"images"`
@@ -67,7 +67,7 @@ func convertGeminiMessages(messages []message) ([]geminiContent, error) {
 			default:
 				return nil, fmt.Errorf("invalid chat message role: %q", msg.Role)
 			}
-			parts, err := createGeminiParts(msg.Content, msg.Images, msg.ToolCalls, msg.Tool)
+			parts, err := createGeminiParts(msg.Content, msg.Images, msg.ToolCalls, msg.ToolName)
 			if err != nil {
 				return nil, err
 			}

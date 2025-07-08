@@ -170,12 +170,12 @@ func mergeParameters(target *cfg.GenerationConfig, source *modelParameters) {
 	}
 }
 
-func createGeminiParts(content string, images []string, toolCalls []toolCall, tool string) ([]geminiPart, error) {
+func createGeminiParts(content string, images []string, toolCalls []toolCall, toolName string) ([]geminiPart, error) {
 	parts := []geminiPart{}
-	if len(tool) > 0 {
+	if len(toolName) > 0 {
 		part := geminiPart{
 			FunctionResponse: &functionResponse{
-				Name: tool,
+				Name: toolName,
 				Response: map[string]string{
 					"result": content,
 				},

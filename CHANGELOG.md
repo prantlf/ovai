@@ -1,5 +1,17 @@
 # Changes
 
+## [0.17.0](https://github.com/prantlf/ovai/compare/v0.16.0...v0.17.0) (2025-07-08)
+
+### Features
+
+* Rename tool to tool_name in a tool answer ([3fab356](https://github.com/prantlf/ovai/commit/3fab356eb882841915ae73fbb066cbc6da13e05a))
+
+### BREAKING CHANGES
+
+Earlier you formatted the tool response with two
+properties: `role=tool, tool=func_name`. Rename the second property
+to `tool_name`, so: `role=tool, tool_name=func_name`.
+
 ## [0.16.0](https://github.com/prantlf/ovai/compare/v0.15.0...v0.16.0) (2025-07-05)
 
 ### Features

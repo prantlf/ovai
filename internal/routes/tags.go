@@ -401,6 +401,10 @@ var googleModels = []modelInfo{
 }
 
 func HandleTags(w http.ResponseWriter, r *http.Request) int {
+	if r.Method == "HEAD" {
+		w.WriteHeader(http.StatusOK)
+		return http.StatusOK
+	}
 	log.Dbg("> list models")
 	output := &tagsOutput{}
 	if canProxy {

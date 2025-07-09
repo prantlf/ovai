@@ -27,6 +27,7 @@ func main() {
 		Addr: ":" + port,
 	}
 
+	http.HandleFunc("/", web.WrapHandler(routes.HandleRoot, []string{"GET", "HEAD"}))
 	http.HandleFunc("/api/chat", web.WrapHandler(routes.HandleChat, []string{"POST"}))
 	http.HandleFunc("/api/embeddings", web.WrapHandler(routes.HandleEmbeddings, []string{"POST"}))
 	http.HandleFunc("/api/embed", web.WrapHandler(routes.HandleEmbed, []string{"POST"}))
@@ -34,7 +35,7 @@ func main() {
 	http.HandleFunc("/api/ping", web.WrapHandler(routes.HandlePing, []string{"GET", "HEAD"}))
 	http.HandleFunc("/api/show", web.WrapHandler(routes.HandleShow, []string{"POST"}))
 	http.HandleFunc("/api/shutdown", web.WrapHandler(routes.HandleShutdown, []string{"POST"}))
-	http.HandleFunc("/api/tags", web.WrapHandler(routes.HandleTags, []string{"GET"}))
+	http.HandleFunc("/api/tags", web.WrapHandler(routes.HandleTags, []string{"GET", "HEAD"}))
 
 	go func() {
 		log.Log("listen on http://localhost:%s", port)

@@ -1,6 +1,6 @@
 FROM prantlf/healthchk as healthchk
 
-FROM ollama/ollama
+FROM alpine/ollama
 LABEL maintainer="Ferdinand Prantl <prantlf@gmail.com>"
 
 COPY --from=healthchk /healthchk /

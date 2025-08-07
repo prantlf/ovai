@@ -127,7 +127,7 @@ For example, run a container named `ovai` in the background with custom defaults
       -v ${PWD}/model-defaults.json:/usr/src/app/model-defaults.json \
       prantlf/ovai
 
-And the same task as above, only using Docker Compose (place [docker-compose.yml] or [docker-compose-ollama.yml], if you want to use ollama too, to the current directory) to make it easier:
+And the same task as above, only using Docker Compose (place [docker-compose.yml] or [docker-compose-ollama.yml], if you want to use ollama too, to the current directory) to make it easier. Just a note - [docker-compose-ollama.yml] builds a local image using CPU-only Ollama. If you want to use GPU, customize `Dockerfile.ollama`:
 
     docker-compose up -d --wait
     docker-compose -f docker-compose-ollama.yml up -d --wait

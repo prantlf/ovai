@@ -1,5 +1,11 @@
 # Changes
 
+## [0.19.0](https://github.com/prantlf/ovai/compare/v0.18.0...v0.19.0) (2025-08-07)
+
+### Features
+
+* Minimize the testing Docker image with Ollama to CPU-only ([7336191](https://github.com/prantlf/ovai/commit/73361915653a152c848fd7de8ef8779daab19116))
+
 ## [0.18.0](https://github.com/prantlf/ovai/compare/v0.17.0...v0.18.0) (2025-08-07)
 
 ### Features

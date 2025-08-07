@@ -1,5 +1,16 @@
 # Changes
 
+## [0.18.0](https://github.com/prantlf/ovai/compare/v0.17.0...v0.18.0) (2025-08-07)
+
+### Features
+
+* Respond to heartbeat request at / ([2cb39ea](https://github.com/prantlf/ovai/commit/2cb39ead61b7d9de1eac3b12e163f63fedc27703))
+* Suuport output vector dimensionality for the new Gemini embedding models ([30d88af](https://github.com/prantlf/ovai/commit/30d88af28523fc3fad11afab716e406fe172b18a))
+
+### Bug Fixes
+
+* Add missing handler for the / URL (health check) ([83f4a53](https://github.com/prantlf/ovai/commit/83f4a530140338c5f24aa8228ab9819c68de6494))
+
 ## [0.17.0](https://github.com/prantlf/ovai/compare/v0.16.0...v0.17.0) (2025-07-08)
 
 ### Features

@@ -154,8 +154,9 @@ Creates a vectors from the specified input. See the available [embedding models]
 
 ```
 ❯ curl localhost:22434/api/embed -d '{
-  "model": "textembedding-gecko@003",
-  "input": ["Half-orc is the best race for a barbarian."]
+  "model": "gemini-embedding-001",
+  "input": ["Half-orc is the best race for a barbarian."],
+  "dimensionality": 768
 }'
 
 { "embeddings": [[0.05424513295292854, -0.023687424138188362, ...]] }
@@ -167,13 +168,14 @@ Previous request remains supported for compatibility:
 
 ```
 ❯ curl localhost:22434/api/embeddings -d '{
-  "model": "textembedding-gecko@003",
+  "model": "gemini-embedding-001",
   "prompt": "Half-orc is the best race for a barbarian."
 }'
 
 { "embedding": [0.05424513295292854, -0.023687424138188362, ...] }
 ```
 
+The property `dimensionality` is supported by the model `gemini-embedding-001`. Possible values are 768, 1536 and 3072. The default is 3072.
 
 ### Text
 
@@ -203,6 +205,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
 ```
 
 The property `stream` defaults to be `true`. The property `think` defaults to `false`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
+
 ```
 "options": {
   "num_predict": 8192,

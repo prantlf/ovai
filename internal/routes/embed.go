@@ -14,8 +14,9 @@ import (
 type inputPrompt []string
 
 type embedInput struct {
-	Model string      `json:"model"`
-	Input inputPrompt `json:"input"`
+	Model          string      `json:"model"`
+	Input          inputPrompt `json:"input"`
+	Dimensionality int         `json:"dimensionality,omitempty"`
 }
 
 type embedOutput struct {
@@ -94,6 +95,11 @@ func HandleEmbed(w http.ResponseWriter, r *http.Request) int {
 					Content: text,
 				},
 			},
+		}
+		if input.Dimensionality > 0 {
+			reqBody.Parameters = &embeddingParameters{
+				OutputDimensionality: input.Dimensionality,
+			}
 		}
 		var resBody embeddingsResponse
 		status, _, err := forwardRequest(input.Model+":predict", reqBody, &resBody)

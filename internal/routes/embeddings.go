@@ -19,8 +19,13 @@ type instance struct {
 	Content string `json:"content"`
 }
 
+type embeddingParameters struct {
+	OutputDimensionality int `json:"outputDimensionality,omitempty"`
+}
+
 type embeddingsBody struct {
-	Instances []instance `json:"instances"`
+	Instances  []instance           `json:"instances"`
+	Parameters *embeddingParameters `json:"parameters,omitempty"`
 }
 
 type statistics struct {

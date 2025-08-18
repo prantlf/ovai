@@ -35,6 +35,19 @@ type tagsOutput struct {
 
 var googleModels = []modelInfo{
 	{
+		Name:       "gemini-2.5-flash-lite",
+		Model:      "gemini-2.5-flash-lite",
+		ModifiedAt: "2025-07-22T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-2.5-flash-lite",
+			Families: []string{
+				"gemini-2.5-flash-lite",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "2026-07-22T00:00:00.000Z",
+	},
+	{
 		Name:       "gemini-2.5-flash-lite-preview-06-17",
 		Model:      "gemini-2.5-flash-lite-preview-06-17",
 		ModifiedAt: "2025-06-17T00:00:00.000Z",

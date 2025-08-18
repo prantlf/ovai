@@ -381,11 +381,6 @@ type tokenCount struct {
 	TotalTokens int `json:"totalTokens"`
 }
 
-type tokenMetadata struct {
-	InputTokenCount  tokenCount `json:"inputTokenCount"`
-	OutputTokenCount tokenCount `json:"outputTokenCount"`
-}
-
 type generateResponse struct {
 	Model     string `json:"model"`
 	CreatedAt string `json:"created_at"`

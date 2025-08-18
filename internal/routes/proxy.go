@@ -67,6 +67,9 @@ func proxyStream(name string, input []byte, w http.ResponseWriter, result string
 	w.WriteHeader(status)
 	buf := make([]byte, 1024*1024)
 	for {
+		if f, ok := w.(http.Flusher); ok {
+			f.Flush()
+		}
 		size, err := resReader.Read(buf)
 		if err == io.EOF {
 			if size == 0 {

@@ -204,7 +204,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
 }
 ```
 
-The property `stream` defaults to be `true`. The property `think` defaults to `false` and except for boolean values, it accepts strings `low`, `medium` and `high`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
+The property `stream` defaults to `true`. The property `think` defaults to `false` and except for boolean values, it accepts strings `high`, `medium`, `low` and `default`. See also [Gemini Thinking]. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
 
 ```
 "options": {
@@ -212,8 +212,9 @@ The property `stream` defaults to be `true`. The property `think` defaults to `f
   "temperature": 1,
   "top_p": 0.95,
   "top_k": 40,
-  // available only for gemini-2.5-flash: 0-2456
-  //             or for gemini-2.5-pro:   128-32768
+  // available only for gemini-2.5-flash-lite: 512-24576, 0 or -1 (default:  0)
+  //             or for gemini-2.5-flash:        0-24576    or -1 (default: -1)
+  //             or for gemini-2.5-pro:        128-32768    or -1 (default: -1)
   "thinking_budget": 0
 }
 ```
@@ -257,7 +258,7 @@ Replies to a chat with the specified message history. See the available [gemini 
 }
 ```
 
-The property `stream` defaults to `true`. The property `think` defaults to `false` and except for boolean values, it accepts strings `low`, `medium` and `high`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
+The property `stream` defaults to `true`. The property `think` defaults to `false` and except for boolean values, it accepts strings `high`, `medium`, `low` and `default`. See also [Gemini Thinking]. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
 
 ```
 "options": {
@@ -265,8 +266,9 @@ The property `stream` defaults to `true`. The property `think` defaults to `fals
   "temperature": 1,
   "top_p": 0.95,
   "top_k": 40,
-  // available only for gemini-2.5-flash: 0-2456
-  //             or for gemini-2.5-pro:   128-32768
+  // available only for gemini-2.5-flash-lite: 512-24576, 0 or -1 (default:  0)
+  //             or for gemini-2.5-flash:        0-24576    or -1 (default: -1)
+  //             or for gemini-2.5-pro:        128-32768    or -1 (default: -1)
   "thinking_budget": 0
 }
 ```
@@ -407,7 +409,7 @@ An extension to chat that requests information from a local function, which can 
 }
 ```
 
-The property `stream` defaults to `true`. The property `think` defaults to `false` and except for boolean values, it accepts strings `low`, `medium` and `high`. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
+The property `stream` defaults to `true`. The property `think` defaults to `false` and except for boolean values, it accepts strings `high`, `medium`, `low` and `default`. See also [Gemini Thinking]. The property `options` is optional, letting the model provide its defaults. It can be set to the following values, for example:
 
 ```
 "options": {
@@ -415,8 +417,9 @@ The property `stream` defaults to `true`. The property `think` defaults to `fals
   "temperature": 1,
   "top_p": 0.95,
   "top_k": 40,
-  // available only for gemini-2.5-flash: 0-2456
-  //             or for gemini-2.5-pro:   128-32768
+  // available only for gemini-2.5-flash-lite: 512-24576, 0 or -1 (default:  0)
+  //             or for gemini-2.5-flash:        0-24576    or -1 (default: -1)
+  //             or for gemini-2.5-pro:        128-32768    or -1 (default: -1)
   "thinking_budget": 0
 }
 ```
@@ -497,7 +500,28 @@ Gracefully shuts down the HTTP server and exits the process.
 
 ## Models
 
-## Vertex AI
+### Gemini Thinking
+
+The parameter `think` defaults to `false`. It accepts the following boolean and string values:
+
+| Value       | Effect                                                                                  |
+|:------------|:----------------------------------------------------------------------------------------|
+| `false`     | disables thinking, if the module supports it, otherwise sets the lowest thinking budget |
+| `true`      | enables thinking with the default thinking budget, if the module supports it            |
+| `"default"` | enables the default behaviour of the model                                              |
+| `"low"`     | enables thinking with the lowest thinking budget, if the module supports it             |
+| `"medium"`  | enables thinking with the medium thinking budget, if the module supports it             |
+| `"height"`  | enables thinking with the highest thinking budget, if the module supports it            |
+
+The option `thinking_budget` can refine the thinking budget decided by the parameter `think`. The value `-1` enables the default budget according to the selected model. Other thinking budget values:
+
+| Model                   | Range       | Low | Medium | High  | Zero disables | Default |
+|:------------------------|------------:|----:|-------:|------:|:-------------:|:-------:|
+| `gemini-2.5-flash-lite` | 512 - 24576 | 512 |  12544 | 24576 |      Yes      |    0    |
+| `gemini-2.5-flash`      |   0 - 24576 | 128 |  12288 | 24576 |      Yes      |   -1    |
+| `gemini-2.5-pro`        | 128 - 32768 | 128 |  16448 | 32768 |      N/A      |   -1    |
+
+### Vertex AI
 
 Recognised models for embeddings: gemini-embedding-001, textembedding-gecko@001, textembedding-gecko@002, textembedding-gecko@003, textembedding-gecko-multilingual@001, text-multilingual-embedding-002, text-embedding-004, text-embedding-005, multimodalembedding@001.
 
@@ -510,6 +534,7 @@ Small models usable on machines with less memory and no AI accelerator:
 | Name             | Size   |
 |:-----------------|-------:|
 | deepseek-r1:1.5b | 1.1 GB |
+| gemma3:270m      | 291 MB |
 | gemma3:1b        | 815 MB |
 | gemma3:4b        | 3.3 GB |
 | granite3.1-dense:2b    | 1.5 GB |
@@ -625,3 +650,4 @@ Licensed under the [MIT License].
 [lifecycle of the Vertex AI models]: https://cloud.google.com/vertex-ai/generative-ai/docs/learn/model-versioning
 [embedding models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/text-embeddings#model_versions
 [gemini text and chat models]: https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini#model_versions
+[Gemini Thinking]: #gemini-thinking

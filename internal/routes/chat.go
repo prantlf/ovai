@@ -42,7 +42,7 @@ type chatInput struct {
 	Model    string          `json:"model"`
 	Messages []message       `json:"messages"`
 	Tools    []FunctionTool  `json:"tools"`
-	Think    bool            `json:"think"`
+	Think    thinkLevel      `json:"think"`
 	Stream   bool            `json:"stream"`
 	Options  modelParameters `json:"options"`
 }
@@ -92,12 +92,9 @@ func createChatGeminiBody(input *chatInput) (interface{}, error) {
 		return nil, err
 	}
 	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
-	if input.Think {
-		generationConfig.ThinkingConfig = cfg.ThinkingConfig{
-			IncludeThoughts: true,
-		}
+	if err := mergeParameters(&generationConfig, input.Model, input.Think, &input.Options); err != nil {
+		return nil, err
 	}
-	mergeParameters(&generationConfig, &input.Options)
 	var tools []toolsWrapper
 	toolCount := len(input.Tools)
 	if toolCount > 0 {
@@ -172,7 +169,7 @@ func convertFunctionCallsToToolCalls(functionCalls []functionCall) []toolCall {
 func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	input := chatInput{
 		Options: modelParameters{},
-		Think:   false,
+		Think:   "none",
 		Stream:  true,
 	}
 	reqPayload, err := io.ReadAll(r.Body)

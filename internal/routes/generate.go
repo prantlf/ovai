@@ -24,11 +24,13 @@ type modelParameters struct {
 	ThinkingBudget  *int     `json:"thinking_budget,omitempty"`
 }
 
+type thinkLevel string
+
 type generateInput struct {
 	Model   string          `json:"model"`
 	Prompt  string          `json:"prompt"`
 	Images  []string        `json:"images"`
-	Think   bool            `json:"think"`
+	Think   thinkLevel      `json:"think"`
 	Stream  bool            `json:"stream"`
 	Options modelParameters `json:"options"`
 }
@@ -111,6 +113,27 @@ type geminiOutput struct {
 	ModelVersion string `json:"modelVersion"`
 }
 
+func (t *thinkLevel) UnmarshalJSON(data []byte) error {
+	if len(data) > 1 && (data[0] == 'f' || data[0] == 't') {
+		var value bool
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		if value {
+			*t = "default"
+		} else {
+			*t = "none"
+		}
+	} else {
+		var value string
+		if err := json.Unmarshal(data, &value); err != nil {
+			return err
+		}
+		*t = thinkLevel(value)
+	}
+	return nil
+}
+
 func (o *geminiCompleteOutput) GetCandidates() []geminiCandidate {
 	candidates := make([]geminiCandidate, len(o.Candidates))
 	for i, candidate := range o.Candidates {
@@ -152,7 +175,59 @@ func (o *geminiFinalOutput) GetCandidates() []geminiCandidate {
 	return candidates
 }
 
-func mergeParameters(target *cfg.GenerationConfig, source *modelParameters) {
+func GetThinkingBudget(model string, think thinkLevel) (int, error) {
+	thinkingBudget := -2
+	switch think {
+	case "high":
+		if strings.HasPrefix(model, "gemini-2.5-pro") {
+			thinkingBudget = 32768
+		} else if strings.HasPrefix(model, "gemini-2.5-flash-lite") {
+			thinkingBudget = 24576
+		} else if strings.HasPrefix(model, "gemini-2.5-flash") {
+			thinkingBudget = 24576
+		}
+	case "medium":
+		if strings.HasPrefix(model, "gemini-2.5-pro") {
+			thinkingBudget = 16448
+		} else if strings.HasPrefix(model, "gemini-2.5-flash-lite") {
+			thinkingBudget = 12544
+		} else if strings.HasPrefix(model, "gemini-2.5-flash") {
+			thinkingBudget = 12288
+		}
+	case "low":
+		if strings.HasPrefix(model, "gemini-2.5-pro") {
+			thinkingBudget = 128
+		} else if strings.HasPrefix(model, "gemini-2.5-flash-lite") {
+			thinkingBudget = 512
+		} else if strings.HasPrefix(model, "gemini-2.5-flash") {
+			thinkingBudget = 128
+		}
+	case "default":
+		if strings.HasPrefix(model, "gemini-2.5-pro") {
+			thinkingBudget = -1
+		} else if strings.HasPrefix(model, "gemini-2.5-flash-lite") {
+			thinkingBudget = -1
+		} else if strings.HasPrefix(model, "gemini-2.5-flash") {
+			thinkingBudget = -1
+		}
+	case "none":
+		if strings.HasPrefix(model, "gemini-2.5-pro") {
+			thinkingBudget = 128
+		} else if strings.HasPrefix(model, "gemini-2.5-flash-lite") {
+			thinkingBudget = 0
+		} else if strings.HasPrefix(model, "gemini-2.5-flash") {
+			thinkingBudget = 0
+		}
+	default:
+		return 0, fmt.Errorf("invalid thinking level: %s", think)
+	}
+	if thinkingBudget == -2 {
+		return 0, fmt.Errorf("invalid thinking model: %s", model)
+	}
+	return thinkingBudget, nil
+}
+
+func mergeParameters(target *cfg.GenerationConfig, model string, think thinkLevel, source *modelParameters) error {
 	if source.MaxOutputTokens != nil {
 		target.MaxOutputTokens = source.MaxOutputTokens
 	}
@@ -165,9 +240,33 @@ func mergeParameters(target *cfg.GenerationConfig, source *modelParameters) {
 	if source.TopK != nil {
 		target.TopK = source.TopK
 	}
-	if source.ThinkingBudget != nil {
-		target.ThinkingConfig.ThinkingBudget = source.ThinkingBudget
+	if len(think) > 0 {
+		var thoughts bool
+		if think != "none" {
+			thoughts = true
+		} else {
+			if strings.HasPrefix(model, "gemini-2.5-pro") {
+				thoughts = true
+			} else {
+				thoughts = false
+			}
+		}
+		target.ThinkingConfig = cfg.ThinkingConfig{
+			IncludeThoughts: thoughts,
+		}
+		var thinkingBudget int
+		if source.ThinkingBudget != nil {
+			thinkingBudget = *source.ThinkingBudget
+		} else {
+			var err error
+			thinkingBudget, err = GetThinkingBudget(model, think)
+			if err != nil {
+				return err
+			}
+		}
+		target.ThinkingConfig.ThinkingBudget = &thinkingBudget
 	}
+	return nil
 }
 
 func createGeminiParts(content string, images []string, toolCalls []toolCall, toolName string) ([]geminiPart, error) {
@@ -220,12 +319,9 @@ func createGeminiParts(content string, images []string, toolCalls []toolCall, to
 
 func createGenerateGeminiBody(input *generateInput) (interface{}, error) {
 	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
-	if input.Think {
-		generationConfig.ThinkingConfig = cfg.ThinkingConfig{
-			IncludeThoughts: true,
-		}
+	if err := mergeParameters(&generationConfig, input.Model, input.Think, &input.Options); err != nil {
+		return nil, err
 	}
-	mergeParameters(&generationConfig, &input.Options)
 	parts, err := createGeminiParts(input.Prompt, input.Images, nil, "")
 	if err != nil {
 		return nil, err
@@ -404,7 +500,7 @@ type generateCompleteResponse struct {
 func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	input := generateInput{
 		Options: modelParameters{},
-		Think:   false,
+		Think:   "none",
 		Stream:  true,
 	}
 	reqPayload, err := io.ReadAll(r.Body)

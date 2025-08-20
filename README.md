@@ -1,6 +1,6 @@
 # ovai - ollama-vertex-ai
 
-HTTP proxy for accessing [Vertex AI] with the REST API interface of [ollama]. Optionally forwarding requests for other models to `ollama`. Written in [Go].
+HTTP proxy for accessing [Vertex AI] with the REST API interface of [ollama] or [OpenAI]. Optionally forwarding requests for other models to `ollama`. Written in [Go].
 
 ## Synopsis
 
@@ -272,6 +272,152 @@ The property `stream` defaults to `true`. The property `think` defaults to `fals
   "thinking_budget": 0
 }
 ```
+
+### OpenAI
+
+Provides chat API compatible with [OpenAI]. See the available [gemini text and chat models].
+
+```
+❯ curl localhost:22434/v1/chat/completions -d '{
+  "model": "gemini-2.5-flash-lite",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert on Dungeons and Dragons."
+    },
+    {
+      "role": "user",
+      "content": "What race is the best for a barbarian?"
+    }
+  ],
+  "stream": false,
+  "stream_options": {
+    "include_usage": false
+  },
+  "reasoning_effort": "medium",
+	max_completion_tokens: 8192,
+	temperature: 1,
+	top_p: 0.95,
+  // available only for gemini-2.5-flash-lite: 512-24576, 0 or -1 (default:  0)
+  //             or for gemini-2.5-flash:        0-24576    or -1 (default: -1)
+  //             or for gemini-2.5-pro:        128-32768    or -1 (default: -1)
+  "thinking_budget": null
+}'
+
+{
+  "model": "gemini-2.5-flash",
+  "created": 1755700700,
+  "id": "2025-08-20T14:38:20Z",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_gemini",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Half-Orcs are a strong and resilient race, making them ideal for barbarians. ..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "completion_tokens": 11,
+    "prompt_tokens": 8,
+    "total_tokens": 19
+  }
+}
+```
+
+The property `stream` defaults to `false`. The property `stream_options.include_usage` defaults to `false`. The property `reasoning_effort` defaults to `medium` and accepts strings `high`, `medium`, `low`, `minimal`, `none`, and `default`. See also [Gemini Thinking].
+
+### OpenAI Streaming
+
+Responds in chunks in the [SSE format] and the content type `text/event-stream` compatible with [OpenAI].
+
+```
+❯ curl localhost:22434/v1/chat/completions -d '{
+  "model": "gemini-2.5-flash-lite",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert on Dungeons and Dragons."
+    },
+    {
+      "role": "user",
+      "content": "What race is the best for a barbarian?"
+    }
+  ],
+  "stream": true,
+  "stream_options": {
+    "include_usage": true
+  }
+}'
+
+data: {
+  "model": "gemini-2.5-flash",
+  "created": 1755700700,
+  "id": "2025-08-20T14:38:20Z",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_gemini",
+  "choices": [
+    {
+      "index": 0,
+      "delta": {
+        "role": "assistant",
+        "content": "Half-Orcs are a strong"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "completion_tokens": 11,
+    "prompt_tokens": 8,
+    "total_tokens": 19
+  }
+}
+
+data: {
+  "model": "gemini-2.5-flash",
+  "created": 1755700700,
+  "id": "2025-08-20T14:38:20Z",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_gemini",
+  "choices": [
+    {
+      "index": 0,
+      "delta": {
+        "role": "assistant",
+        "content": " and resilient race, making them ideal for barbarians. ..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "completion_tokens": 11,
+    "prompt_tokens": 8,
+    "total_tokens": 19
+  }
+}
+
+data: {
+  "model": "gemini-2.5-flash",
+  "created": 1755700700,
+  "id": "2025-08-20T14:38:20Z",
+  "object": "chat.completion",
+  "system_fingerprint": "fp_gemini",
+  "choices": [],
+  "usage": {
+    "completion_tokens": 11,
+    "prompt_tokens": 8,
+    "total_tokens": 19
+  }
+}
+
+[DONE]
+
+```
+
+The property `stream` has to be set to `true`. If the property `stream_options.include_usage` is set to `true`, an additional chunk will be generated with an empty `choices` array and the usage statistics, else this chunk won't be generated.
 
 ### Tools
 
@@ -640,6 +786,8 @@ Licensed under the [MIT License].
 [MIT License]: http://en.wikipedia.org/wiki/MIT_License
 [Vertex AI]: https://cloud.google.com/vertex-ai
 [ollama]: https://ollama.com
+[OpenAI]: https://platform.openai.com/docs/api-reference/chat/create
+[SSE format]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
 [GitHub Releases]: https://github.com/prantlf/ovai/releases/
 [Go]: https://go.dev
 [default model parameters]: ./model-defaults.json

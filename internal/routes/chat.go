@@ -47,7 +47,7 @@ type chatInput struct {
 	Options  modelParameters `json:"options"`
 }
 
-func convertGeminiMessages(messages []message) ([]geminiContent, error) {
+func convertChatMessagesToGemini(messages []message) ([]geminiContent, error) {
 	systemMessages := make([]geminiPart, 0, 1)
 	chatMessages := make([]geminiContent, 0, len(messages))
 	for _, msg := range messages {
@@ -67,7 +67,7 @@ func convertGeminiMessages(messages []message) ([]geminiContent, error) {
 			default:
 				return nil, fmt.Errorf("invalid chat message role: %q", msg.Role)
 			}
-			parts, err := createGeminiParts(msg.Content, msg.Images, msg.ToolCalls, msg.ToolName)
+			parts, err := convertContentToGeminiParts(msg.Content, msg.Images, msg.ToolCalls, msg.ToolName)
 			if err != nil {
 				return nil, err
 			}
@@ -86,20 +86,12 @@ func convertGeminiMessages(messages []message) ([]geminiContent, error) {
 	return chatMessages, nil
 }
 
-func createChatGeminiBody(input *chatInput) (interface{}, error) {
-	chatMessages, err := convertGeminiMessages(input.Messages)
-	if err != nil {
-		return nil, err
-	}
-	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
-	if err := mergeParameters(&generationConfig, input.Model, input.Think, &input.Options); err != nil {
-		return nil, err
-	}
+func convertToolsToGemini(inputTools []FunctionTool) []toolsWrapper {
 	var tools []toolsWrapper
-	toolCount := len(input.Tools)
+	toolCount := len(inputTools)
 	if toolCount > 0 {
 		functions := make([]interface{}, toolCount)
-		for i, function := range input.Tools {
+		for i, function := range inputTools {
 			functions[i] = function.Function
 		}
 		tools = []toolsWrapper{
@@ -108,6 +100,19 @@ func createChatGeminiBody(input *chatInput) (interface{}, error) {
 			},
 		}
 	}
+	return tools
+}
+
+func convertChatBodyToGemini(input *chatInput) (interface{}, error) {
+	chatMessages, err := convertChatMessagesToGemini(input.Messages)
+	if err != nil {
+		return nil, err
+	}
+	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
+	if err := mergeParameters(&generationConfig, input.Model, input.Think, &input.Options); err != nil {
+		return nil, err
+	}
+	tools := convertToolsToGemini(input.Tools)
 	body := &geminiBody{
 		Contents:         chatMessages,
 		GenerationConfig: generationConfig,
@@ -119,7 +124,7 @@ func createChatGeminiBody(input *chatInput) (interface{}, error) {
 
 func prepareChatBody(input *chatInput) (string, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":generateContent"
-	body, err := createChatGeminiBody(input)
+	body, err := convertChatBodyToGemini(input)
 	if err != nil {
 		return "", nil, nil, err
 	}
@@ -128,7 +133,7 @@ func prepareChatBody(input *chatInput) (string, interface{}, interface{}, error)
 
 func prepareChatStream(input *chatInput) (string, interface{}, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":streamGenerateContent?alt=sse"
-	body, err := createChatGeminiBody(input)
+	body, err := convertChatBodyToGemini(input)
 	if err != nil {
 		return "", nil, nil, nil, err
 	}
@@ -203,9 +208,8 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 	if !forward {
 		if input.Stream {
 			return proxyStream("chat", reqPayload, w, "answer", input.Model)
-		} else {
-			return proxyRequest("chat", reqPayload, w, "answer", input.Model)
 		}
+		return proxyRequest("chat", reqPayload, w, "answer", input.Model)
 	}
 
 	if input.Stream {
@@ -246,7 +250,8 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 			final := false
 			if err != nil {
 				break
-			} else if len(reason) > 0 {
+			}
+			if len(reason) > 0 {
 				toolCalls := convertFunctionCallsToToolCalls(functionCalls)
 				duration := time.Since(start)
 				promptDuration := int64(math.Round(float64(int64(duration) / 4)))

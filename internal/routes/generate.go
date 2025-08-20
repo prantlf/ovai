@@ -269,7 +269,7 @@ func mergeParameters(target *cfg.GenerationConfig, model string, think thinkLeve
 	return nil
 }
 
-func createGeminiParts(content string, images []string, toolCalls []toolCall, toolName string) ([]geminiPart, error) {
+func convertContentToGeminiParts(content string, images []string, toolCalls []toolCall, toolName string) ([]geminiPart, error) {
 	parts := []geminiPart{}
 	if len(toolName) > 0 {
 		part := geminiPart{
@@ -317,12 +317,12 @@ func createGeminiParts(content string, images []string, toolCalls []toolCall, to
 	return parts, nil
 }
 
-func createGenerateGeminiBody(input *generateInput) (interface{}, error) {
+func convertGenerateBodyToGemini(input *generateInput) (interface{}, error) {
 	generationConfig := cfg.Defaults.GeminiDefaults.GenerationConfig
 	if err := mergeParameters(&generationConfig, input.Model, input.Think, &input.Options); err != nil {
 		return nil, err
 	}
-	parts, err := createGeminiParts(input.Prompt, input.Images, nil, "")
+	parts, err := convertContentToGeminiParts(input.Prompt, input.Images, nil, "")
 	if err != nil {
 		return nil, err
 	}
@@ -341,7 +341,7 @@ func createGenerateGeminiBody(input *generateInput) (interface{}, error) {
 
 func prepareGenerateBody(input *generateInput) (string, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":generateContent"
-	body, err := createGenerateGeminiBody(input)
+	body, err := convertGenerateBodyToGemini(input)
 	if err != nil {
 		return "", nil, nil, err
 	}
@@ -350,7 +350,7 @@ func prepareGenerateBody(input *generateInput) (string, interface{}, interface{}
 
 func prepareGenerateStream(input *generateInput) (string, interface{}, interface{}, interface{}, error) {
 	urlPrefix := input.Model + ":streamGenerateContent?alt=sse"
-	body, err := createGenerateGeminiBody(input)
+	body, err := convertGenerateBodyToGemini(input)
 	if err != nil {
 		return "", nil, nil, nil, err
 	}
@@ -534,9 +534,8 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 	if !forward {
 		if input.Stream {
 			return proxyStream("generate", reqPayload, w, "result", input.Model)
-		} else {
-			return proxyRequest("generate", reqPayload, w, "result", input.Model)
 		}
+		return proxyRequest("generate", reqPayload, w, "result", input.Model)
 	}
 
 	if input.Stream {
@@ -576,7 +575,8 @@ func HandleGenerate(w http.ResponseWriter, r *http.Request) int {
 			final := false
 			if err != nil {
 				break
-			} else if len(reason) > 0 {
+			}
+			if len(reason) > 0 {
 				duration := time.Since(start)
 				promptDuration := int64(math.Round(float64(int64(duration) / 4)))
 				resBody = &generateCompleteResponse{

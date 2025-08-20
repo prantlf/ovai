@@ -124,6 +124,14 @@ func CreateRawPostRequest(url string, input []byte) (*http.Request, error) {
 	return req, nil
 }
 
+func WriteResponseString(w http.ResponseWriter, text string) bool {
+	if _, err := w.Write([]byte(text)); err != nil {
+		log.Dbg("! writing response body failed: %v", err)
+		return false
+	}
+	return true
+}
+
 // type happyEyeballs int
 
 // const (

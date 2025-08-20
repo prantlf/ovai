@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/prantlf/ovai/internal/log"
 	"github.com/prantlf/ovai/internal/web"
@@ -48,7 +49,7 @@ func proxyRequest(name string, input []byte, w http.ResponseWriter, result strin
 	return status
 }
 
-func proxyStream(name string, input []byte, w http.ResponseWriter, result string, model string) int {
+func proxyStream(name string, input []byte, w http.ResponseWriter, r *http.Request, result string, model string) int {
 	ollamaUrl := fmt.Sprintf("%s/api/%s", ollamaOrigin, name)
 	req, err := web.CreateRawPostRequest(ollamaUrl, input)
 	if err != nil {
@@ -63,6 +64,11 @@ func proxyStream(name string, input []byte, w http.ResponseWriter, result string
 			log.Dbg("closing response body stream failed: %v", err)
 		}
 	}()
+	accept := r.Header.Get("Accept")
+	sse := strings.HasPrefix(accept, "text/event-stream")
+	if sse {
+		w.Header().Set("Accept", "text/event-stream")
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	buf := make([]byte, 1024*1024)
@@ -94,8 +100,14 @@ func proxyStream(name string, input []byte, w http.ResponseWriter, result string
 				}
 			}
 		}
+		if sse {
+			web.WriteResponseString(w, "data: ")
+		}
 		if _, err := w.Write(buf[0:size]); err != nil {
 			log.Dbg("! writing response body failed: %v", err)
+		}
+		if sse {
+			web.WriteResponseString(w, "\n\n")
 		}
 	}
 	return status

@@ -12,6 +12,7 @@ import (
 
 	"github.com/prantlf/ovai/internal/cfg"
 	"github.com/prantlf/ovai/internal/log"
+	"github.com/prantlf/ovai/internal/web"
 )
 
 type streamOptions struct {
@@ -369,7 +370,7 @@ func HandleCompletions(w http.ResponseWriter, r *http.Request) int {
 
 	if !forward {
 		if input.Stream {
-			return proxyStream("chat/completions", reqPayload, w, "answer", input.Model)
+			return proxyStream("chat/completions", reqPayload, w, r, "answer", input.Model)
 		}
 		return proxyRequest("chat/completions", reqPayload, w, "answer", input.Model)
 	}
@@ -388,7 +389,15 @@ func HandleCompletions(w http.ResponseWriter, r *http.Request) int {
 				log.Dbg("closing response body stream failed: %v", err)
 			}
 		}()
-		w.Header().Set("Content-Type", "text/event-stream")
+		accept := r.Header.Get("Accept")
+		sse := !strings.HasPrefix(accept, "application/x-ndjson")
+		var contentType string
+		if sse {
+			contentType = "text/event-stream"
+		} else {
+			contentType = "application/x-ndjson"
+		}
+		w.Header().Set("Content-Type", contentType)
 		w.WriteHeader(status)
 		var rest []byte
 		for {
@@ -432,15 +441,16 @@ func HandleCompletions(w http.ResponseWriter, r *http.Request) int {
 					},
 				},
 			}
-			w.Write([]byte("data: "))
+			if sse {
+				web.WriteResponseString(w, "data: ")
+			}
 			if err = json.NewEncoder(w).Encode(resBody); err != nil {
 				log.Dbg("! encoding response body failed: %v", err)
 			}
-			w.Write([]byte("\n\n"))
+			if sse {
+				web.WriteResponseString(w, "\n\n")
+			}
 			if final {
-				if f, ok := w.(http.Flusher); ok {
-					f.Flush()
-				}
 				if input.StreamOptions.IncludeUsage {
 					resBody = &completionsCompleteResponse{
 						completionsResponse: createCompletionsResponse(input.Model, true),
@@ -451,16 +461,25 @@ func HandleCompletions(w http.ResponseWriter, r *http.Request) int {
 							TotalTokens:      promptTokens + contentTokens,
 						},
 					}
-					w.Write([]byte("data: "))
-					if err = json.NewEncoder(w).Encode(resBody); err != nil {
-						log.Dbg("! encoding response body failed: %v", err)
-					}
-					w.Write([]byte("\n\n"))
 					if f, ok := w.(http.Flusher); ok {
 						f.Flush()
 					}
+					if sse {
+						web.WriteResponseString(w, "data: ")
+					}
+					if err = json.NewEncoder(w).Encode(resBody); err != nil {
+						log.Dbg("! encoding response body failed: %v", err)
+					}
+					if sse {
+						web.WriteResponseString(w, "\n\n")
+					}
 				}
-				w.Write([]byte("data: [DONE]\n\n"))
+				if sse {
+					if f, ok := w.(http.Flusher); ok {
+						f.Flush()
+					}
+					web.WriteResponseString(w, "data: [DONE]\n\n")
+				}
 				break
 			}
 		}

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/prantlf/ovai/internal/log"
+	"github.com/prantlf/ovai/internal/web"
 )
 
 func HandleRoot(w http.ResponseWriter, r *http.Request) int {
@@ -14,6 +15,6 @@ func HandleRoot(w http.ResponseWriter, r *http.Request) int {
 	log.Dbg(": root")
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Ollama is running"))
+	web.WriteResponseString(w, "Ollama is running")
 	return http.StatusOK
 }

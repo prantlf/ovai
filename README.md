@@ -194,6 +194,7 @@ Generates a text using the specified prompt. See the available [gemini text and 
   "model": "gemini-2.5-flash-lite",
   "created_at": "2024-05-10T14:10:54.885Z",
   "response": "Guilds serve as organizations that bring together individuals with ...",
+  "done_reason": "stop",
   "done": true,
   "total_duration": 13884049373,
   "load_duration": 0,
@@ -248,6 +249,7 @@ Replies to a chat with the specified message history. See the available [gemini 
     "role": "assistant",
     "content": "Half-Orcs are a strong and resilient race, making them ideal for barbarians. ..."
   },
+  "done_reason": "stop",
   "done": true,
   "total_duration": 2325524053,
   "load_duration": 0,
@@ -272,6 +274,59 @@ The property `stream` defaults to `true`. The property `think` defaults to `fals
   "thinking_budget": 0
 }
 ```
+
+### Streaming
+
+Responds in chunks in the JSONL format and with the content type `application/x-ndjson`.
+
+```
+❯ curl localhost:22434/api/chat -d '{
+  "model": "gemini-2.5-flash-lite",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are an expert on Dungeons and Dragons."
+    },
+    {
+      "role": "user",
+      "content": "What race is the best for a barbarian?"
+    }
+  ],
+  "stream": true
+}'
+
+{
+  "model": "gemini-2.5-flash",
+  "created_at": "2024-05-06T23:32:05.219Z",
+  "message": {
+    "role": "assistant",
+    "content": "Half-Orcs are a strong"
+  },
+  "done": false
+}
+{
+  "model": "gemini-2.5-flash",
+  "created_at": "2024-05-06T23:32:05.219Z",
+  "message": {
+    "role": "assistant",
+    "content": " and resilient race, making them ideal for barbarians. ..."
+  },
+  "done_reason": "stop",
+  "done": true,
+  "total_duration": 2325524053,
+  "load_duration": 0,
+  "prompt_eval_count": 9,
+  "prompt_eval_duration: 581381013,
+  "eval_count: 292,
+  "eval_duration: 1744143040
+}
+```
+
+JSON objects above are formatted on multiple lines for readability. They are minified on a single line in the real response.
+
+The property `stream` has to be set to `true`.
+
+The [SSE format] and protocol can be enabled by setting the `Accept` header to `text/event-stream`.
 
 ### OpenAI
 
@@ -332,7 +387,7 @@ The property `stream` defaults to `false`. The property `stream_options.include_
 
 ### OpenAI Streaming
 
-Responds in chunks in the [SSE format] and the content type `text/event-stream` compatible with [OpenAI].
+Responds in chunks in the [SSE format] and with the content type `text/event-stream` compatible with [OpenAI].
 
 ```
 ❯ curl localhost:22434/v1/chat/completions -d '{
@@ -417,7 +472,11 @@ data: {
 
 ```
 
+JSON objects after `data: ` above are formatted on multiple lines for readability. They are minified on a single line in the real response.
+
 The property `stream` has to be set to `true`. If the property `stream_options.include_usage` is set to `true`, an additional chunk will be generated with an empty `choices` array and the usage statistics, else this chunk won't be generated.
+
+The output content type can be changed to JSONL by setting the `Accept` header to `application/x-ndjson`.
 
 ### Tools
 
@@ -476,6 +535,7 @@ An extension to chat that requests information from a local function, which can 
       }
     ],
   },
+  "done_reason": "stop",
   "done": true,
   "total_duration": 2325524053,
   "load_duration": 0,
@@ -545,6 +605,7 @@ An extension to chat that requests information from a local function, which can 
     "role": "assistant",
     "content": "Yes, the initial HP of barbarian is higher than 50. It's 80."
   },
+  "done_reason": "stop",
   "done": true,
   "total_duration": 2325524053,
   "load_duration": 0,

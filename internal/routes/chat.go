@@ -13,6 +13,7 @@ import (
 
 	"github.com/prantlf/ovai/internal/cfg"
 	"github.com/prantlf/ovai/internal/log"
+	"github.com/prantlf/ovai/internal/web"
 )
 
 type function struct {
@@ -207,7 +208,7 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 
 	if !forward {
 		if input.Stream {
-			return proxyStream("chat", reqPayload, w, "answer", input.Model)
+			return proxyStream("chat", reqPayload, w, r, "answer", input.Model)
 		}
 		return proxyRequest("chat", reqPayload, w, "answer", input.Model)
 	}
@@ -226,7 +227,15 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 				log.Dbg("closing response body stream failed: %v", err)
 			}
 		}()
-		w.Header().Set("Content-Type", "application/json")
+		accept := r.Header.Get("Accept")
+		sse := strings.HasPrefix(accept, "text/event-stream")
+		var contentType string
+		if sse {
+			contentType = "text/event-stream"
+		} else {
+			contentType = "application/json"
+		}
+		w.Header().Set("Content-Type", contentType)
 		w.WriteHeader(status)
 		var rest []byte
 		for {
@@ -290,8 +299,14 @@ func HandleChat(w http.ResponseWriter, r *http.Request) int {
 					Done: false,
 				}
 			}
+			if sse {
+				web.WriteResponseString(w, "data: ")
+			}
 			if err = json.NewEncoder(w).Encode(resBody); err != nil {
 				log.Dbg("! encoding response body failed: %v", err)
+			}
+			if sse {
+				web.WriteResponseString(w, "\n\n")
 			}
 			if final {
 				break

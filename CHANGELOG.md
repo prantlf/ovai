@@ -1,5 +1,18 @@
 # Changes
 
+## [0.20.0](https://github.com/prantlf/ovai/compare/v0.19.0...v0.20.0) (2025-08-20)
+
+### Features
+
+* Recognise gemini-2.5-flash-lite ([cdd7988](https://github.com/prantlf/ovai/commit/cdd79880665bf01e9d1e647b132b01beaf976e69))
+* Support low, medium, high and default thinking levels ([27bd80c](https://github.com/prantlf/ovai/commit/27bd80c26b26dab07ecf65d58ce39d5cf374ab54))
+* Add support for OpenAI chat requests ([cdccf03](https://github.com/prantlf/ovai/commit/cdccf030d42a6839cdd4f913cc68f4a28a478526))
+* Switch streaming content type between JSONL and SSE by Accept request header ([2d5bee6](https://github.com/prantlf/ovai/commit/2d5bee69946a9144d47d66c51f4ce71510d6cbe4))
+
+### Bug Fixes
+
+* Flush write stream after every chunk in proxy to Ollama ([de8e3dc](https://github.com/prantlf/ovai/commit/de8e3dcd9cac6b829f642e0df013e146bb5a9ced))
+
 ## [0.19.0](https://github.com/prantlf/ovai/compare/v0.18.0...v0.19.0) (2025-08-07)
 
 ### Features

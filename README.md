@@ -328,7 +328,7 @@ The property `stream` has to be set to `true`.
 
 The [SSE format] and protocol can be enabled by setting the `Accept` header to `text/event-stream`.
 
-### OpenAI
+### OpenAI Chat
 
 Provides chat API compatible with [OpenAI]. See the available [gemini text and chat models].
 
@@ -631,6 +631,7 @@ The property `stream` defaults to `true`. The property `think` defaults to `fals
 }
 ```
 
+
 ### Tags
 
 Lists available models.
@@ -658,6 +659,26 @@ Lists available models.
         "quantization_level": "Q4_0"
       },
       "expires_at": "0001-01-01T00:00:00Z"
+    }
+  ]
+}
+```
+
+### OpenAI Tags
+
+Lists available models in the OpenAI-compatible format. See also the [OpenAI models documentation].
+
+```
+❯ curl localhost:22434/v1/models
+
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "moondream:latest",
+      "object": "model",
+      "created": 0,
+      "owned_by": "ovai"
     }
   ]
 }
@@ -769,16 +790,16 @@ Small models usable on machines with less memory and no AI accelerator:
 | tinyllama        | 637 MB |
 
 #### deepseek-r1
-DeepSeek's first-generation of reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen. 
+DeepSeek's first-generation of reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen.
 
 #### gemma3
 Gemma is a lightweight, family of models from Google built on Gemini technology. The Gemma 3 models are multimodal—processing text and images—and feature a 128K context window with support for over 140 languages. Available in 1B, 4B, 12B, and 27B parameter sizes, they excel in tasks like question answering, summarization, and reasoning, while their compact design allows deployment on resource-limited devices.
 
 #### granite3.1-dense
-The IBM Granite 2B and 8B models are text-only dense LLMs trained on over 12 trillion tokens of data, demonstrated significant improvements over their predecessors in performance and speed in IBM’s initial testing. 
+The IBM Granite 2B and 8B models are text-only dense LLMs trained on over 12 trillion tokens of data, demonstrated significant improvements over their predecessors in performance and speed in IBM’s initial testing.
 
 #### granite3.1-moe
-The IBM Granite 1B and 3B models are long-context mixture of experts (MoE) Granite models from IBM designed for low latency usage. 
+The IBM Granite 1B and 3B models are long-context mixture of experts (MoE) Granite models from IBM designed for low latency usage.
 
 #### granite-embedding
 The IBM Granite Embedding 30M and 278M models models are text-only dense biencoder embedding models, with 30M available in English only and 278M serving multilingual use cases.
@@ -814,13 +835,13 @@ Phi-2: a 2.7B language model by Microsoft Research that demonstrates outstanding
 Phi-3 is a family of lightweight 3B (Mini) and 14B (Medium) state-of-the-art open models by Microsoft.
 
 #### qwen3
-Qwen3 is the latest generation of large language models in Qwen series, offering a comprehensive suite of dense and mixture-of-experts (MoE) models. 
+Qwen3 is the latest generation of large language models in Qwen series, offering a comprehensive suite of dense and mixture-of-experts (MoE) models.
 
 #### smollm
 🪐 A family of small models with 135M, 360M, and 1.7B parameters, trained on a new high-quality dataset.
 
 #### snowflake-arctic-embed2
-Snowflake's frontier embedding model. Arctic Embed 2.0 adds multilingual support without sacrificing English performance or scalability. 
+Snowflake's frontier embedding model. Arctic Embed 2.0 adds multilingual support without sacrificing English performance or scalability.
 
 #### stablelm-zephyr
 A lightweight chat model allowing accurate, and responsive output without requiring high-end hardware.
@@ -848,6 +869,7 @@ Licensed under the [MIT License].
 [Vertex AI]: https://cloud.google.com/vertex-ai
 [ollama]: https://ollama.com
 [OpenAI]: https://platform.openai.com/docs/api-reference/chat/create
+[OpenAI models documentation]: https://platform.openai.com/docs/api-reference/models/list
 [SSE format]: https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#event_stream_format
 [GitHub Releases]: https://github.com/prantlf/ovai/releases/
 [Go]: https://go.dev

@@ -357,7 +357,7 @@ var googleModels = []modelInfo{
 			},
 			Purposes: []string{"embeddings"},
 		},
-		ExpiresAt: "2025-11-18T00:00:00.000Z",
+		ExpiresAt: "2025-11-18T00:00:00Z",
 	},
 	{
 		Name:       "textembedding-gecko-multilingual@001",
@@ -413,22 +413,18 @@ var googleModels = []modelInfo{
 	},
 }
 
-func HandleTags(w http.ResponseWriter, r *http.Request) int {
-	if r.Method == "HEAD" {
-		w.WriteHeader(http.StatusOK)
-		return http.StatusOK
-	}
-	log.Dbg("> list models")
+func getAllModels(w http.ResponseWriter) ([]modelInfo, int) {
 	output := &tagsOutput{}
+	log.Dbg("> list models")
 	if canProxy {
 		ollamaUrl := fmt.Sprintf("%s/api/tags", ollamaOrigin)
 		req, err := web.CreateGetRequest(ollamaUrl)
 		if err != nil {
-			return failRequest(w, http.StatusInternalServerError, err.Error())
+			return nil, failRequest(w, http.StatusInternalServerError, err.Error())
 		}
 		status, err := web.DispatchRequest(req, output)
 		if err != nil {
-			return failRequest(w, status, err.Error())
+			return nil, failRequest(w, status, err.Error())
 		}
 	}
 	models := append(googleModels, output.Models...)
@@ -439,9 +435,21 @@ func HandleTags(w http.ResponseWriter, r *http.Request) int {
 		}
 		log.Dbg("< %d model%s: %v", len(models), log.GetPlural(len(models)), names)
 	}
+	return models, http.StatusOK
+}
+
+func HandleTags(w http.ResponseWriter, r *http.Request) int {
+	if r.Method == "HEAD" {
+		w.WriteHeader(http.StatusOK)
+		return http.StatusOK
+	}
+	models, status := getAllModels(w)
+	if status != http.StatusOK {
+		return status
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	output.Models = models
+	output := &tagsOutput{Models: models}
 	if err := json.NewEncoder(w).Encode(output); err != nil {
 		log.Dbg("! encoding response body failed: %v", err)
 	}

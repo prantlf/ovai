@@ -1,5 +1,11 @@
 # Changes
 
+## [0.21.0](https://github.com/prantlf/ovai/compare/v0.20.0...v0.21.0) (2025-09-03)
+
+### Features
+
+* Add /v1/models listing available models compatible withg OpenAI ([3730de0](https://github.com/prantlf/ovai/commit/3730de0f8a9d47db2c0a774889bdb4a31b57c9f3))
+
 ## [0.20.0](https://github.com/prantlf/ovai/compare/v0.19.0...v0.20.0) (2025-08-20)
 
 ### Features

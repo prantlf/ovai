@@ -35,6 +35,58 @@ type tagsOutput struct {
 
 var googleModels = []modelInfo{
 	{
+		Name:       "gemini-3-pro-preview",
+		Model:      "gemini-3-pro-preview",
+		ModifiedAt: "2025-01-31T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-3-pro",
+			Families: []string{
+				"gemini-3-pro",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
+	{
+		Name:       "gemini-3-flash-preview",
+		Model:      "gemini-3-flash-preview",
+		ModifiedAt: "2025-01-31T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-3-flash",
+			Families: []string{
+				"gemini-3-flash",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
+	{
+		Name:       "gemini-3-pro-image-preview",
+		Model:      "gemini-3-pro-image-preview",
+		ModifiedAt: "2025-01-31T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-3-pro-image",
+			Families: []string{
+				"gemini-3-pro-image",
+			},
+			Purposes: []string{"chat", "generate"},
+		},
+		ExpiresAt: "0001-01-01T00:00:00Z",
+	},
+	{
+		Name:       "gemini-live-2.5-flash-native-audio",
+		Model:      "gemini-live-2.5-flash-native-audio",
+		ModifiedAt: "2025-12-12T00:00:00.000Z",
+		Details: modelDetails{
+			Family: "gemini-live-2.5-flash-native-audio",
+			Families: []string{
+				"gemini-live-2.5-flash-native-audio",
+			},
+			Purposes: []string{"chat", "generate", "audio"},
+		},
+		ExpiresAt: "2026-12-12T00:00:00.000Z",
+	},
+	{
 		Name:       "gemini-2.5-flash-lite",
 		Model:      "gemini-2.5-flash-lite",
 		ModifiedAt: "2025-07-22T00:00:00.000Z",

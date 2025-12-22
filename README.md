@@ -677,7 +677,7 @@ Lists available models in the OpenAI-compatible format. See also the [OpenAI mod
     {
       "id": "moondream:latest",
       "object": "model",
-      "created": 0,
+      "created": 1753142400,
       "owned_by": "ovai"
     }
   ]
@@ -762,25 +762,31 @@ Small models usable on machines with less memory and no AI accelerator:
 | Name             | Size   |
 |:-----------------|-------:|
 | deepseek-r1:1.5b | 1.1 GB |
+| embeddinggemma   | 622 MB |
+| functiongemma    | 301 MB |
 | gemma3:270m      | 291 MB |
 | gemma3:1b        | 815 MB |
 | gemma3:4b        | 3.3 GB |
-| granite3.1-dense:2b    | 1.5 GB |
-| granite3.1-moe:1b      | 2.0 GB |
-| granite3.1-moe:3b      | 1.4 GB |
+| granite4:350m    | 708 MB |
+| granite4:1b      | 3.1 GB |
+| granite4:3b      | 2.1 GB |
 | granite-embedding:30m  |  63 MB |
 | granite-embedding:278m | 563 MB |
 | internlm2:1.8b   | 1.1 GB |
 | llama3.2:1b      | 1.3 GB |
 | llama3.2:3b      | 2.0 GB |
 | llava-phi3       | 2.9 GB |
+| ministral-3:3b   | 3.0 GB |
 | moondream        | 1.7 GB |
 | nomic-embed-text | 274 MB |
+| nomic-embed-text-v2-moe |  958 MB |
 | orca-mini        | 2.0 GB |
 | phi              | 1.6 GB |
 | phi3             | 2.2 GB |
 | qwen3:0.6b       | 397 MB |
 | qwen3:1.7b       | 986 MB |
+| qwen3-embedding:0.6b | 639 MB |
+| qwen3-vl:2b      | 1.9 GB |
 | smollm           | 990 MB |
 | smollm:135m      | 91 MB  |
 | smollm:360m      | 229 MB |
@@ -792,14 +798,17 @@ Small models usable on machines with less memory and no AI accelerator:
 #### deepseek-r1
 DeepSeek's first-generation of reasoning models with comparable performance to OpenAI-o1, including six dense models distilled from DeepSeek-R1 based on Llama and Qwen.
 
+#### embeddinggemma
+EmbeddingGemma is a 300M parameter embedding model from Google.
+
+#### functiongemma
+FunctionGemma is a specialized version of Google's Gemma 3 270M model fine-tuned explicitly for function calling.
+
 #### gemma3
 Gemma is a lightweight, family of models from Google built on Gemini technology. The Gemma 3 models are multimodal—processing text and images—and feature a 128K context window with support for over 140 languages. Available in 1B, 4B, 12B, and 27B parameter sizes, they excel in tasks like question answering, summarization, and reasoning, while their compact design allows deployment on resource-limited devices.
 
-#### granite3.1-dense
-The IBM Granite 2B and 8B models are text-only dense LLMs trained on over 12 trillion tokens of data, demonstrated significant improvements over their predecessors in performance and speed in IBM’s initial testing.
-
-#### granite3.1-moe
-The IBM Granite 1B and 3B models are long-context mixture of experts (MoE) Granite models from IBM designed for low latency usage.
+#### granite4
+Granite 4 features improved instruction following (IF) and tool-calling capabilities, making them more effective in enterprise applications.
 
 #### granite-embedding
 The IBM Granite Embedding 30M and 278M models models are text-only dense biencoder embedding models, with 30M available in English only and 278M serving multilingual use cases.
@@ -813,6 +822,9 @@ Meta's Llama 3.2 goes small with 1B and 3B models.
 #### llava-phi3
 A new small LLaVA model fine-tuned from Phi 3 Mini.
 
+#### ministral-3
+The Ministral 3 family is designed for edge deployment, capable of running on a wide range of hardware.
+
 #### moondream
 moondream2 is a small vision language model designed to run efficiently on edge devices.
 
@@ -821,6 +833,9 @@ A commercial-friendly small language model by NVIDIA optimized for roleplay, RAG
 
 #### nomic-embed-text
 A high-performing open embedding model with a large token context window.
+
+#### nomic-embed-text-v2-moe
+nomic-embed-text-v2-moe is a multilingual MoE text embedding model that excels at multilingual retrieval.
 
 #### nuextract
 A 3.8B model fine-tuned on a private high-quality synthetic dataset for information extraction, based on Phi-3.
@@ -836,6 +851,12 @@ Phi-3 is a family of lightweight 3B (Mini) and 14B (Medium) state-of-the-art ope
 
 #### qwen3
 Qwen3 is the latest generation of large language models in Qwen series, offering a comprehensive suite of dense and mixture-of-experts (MoE) models.
+
+#### qwen3-embedding
+Building upon the foundational models of the Qwen3 series, Qwen3 Embedding provides a comprehensive range of text embeddings models in various sizes.
+
+#### qwen3-vl
+The most powerful vision-language model in the Qwen model family to date.
 
 #### smollm
 🪐 A family of small models with 135M, 360M, and 1.7B parameters, trained on a new high-quality dataset.

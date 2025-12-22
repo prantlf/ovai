@@ -1,5 +1,15 @@
 # Changes
 
+## [0.22.0](https://github.com/prantlf/ovai/compare/v0.21.0...v0.22.0) (2025-12-22)
+
+### Features
+
+* Recognise Gemini 3 preview models ([62e5338](https://github.com/prantlf/ovai/commit/62e53381df000a3f5f6cfd817869cea8b3bc3090))
+
+### Bug Fixes
+
+* Use Google modified date as Ollama create date ([ae3060a](https://github.com/prantlf/ovai/commit/ae3060a87831e839b84b4b62249e94ccbb4006e9))
+
 ## [0.21.0](https://github.com/prantlf/ovai/compare/v0.20.0...v0.21.0) (2025-09-03)
 
 ### Features

@@ -19,8 +19,8 @@ jobs:
       changed-files: ${{ steps.bump.outputs.changed-files }}
       new-version: ${{ steps.bump.outputs.new-version }}
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/bump-version-action@v2
       if: github.ref_name == 'master'
       id: bump
@@ -39,8 +39,8 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -57,8 +57,8 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -75,8 +75,8 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -93,8 +93,8 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -112,8 +112,8 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -132,8 +132,8 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-go@v5
+    - uses: actions/checkout@v6
+    - uses: actions/setup-go@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -152,7 +152,7 @@ jobs:
       - linux
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: prantlf/unshelve-changes-action@v2
       if: ${{ needs.linux.outputs.changed == 'true' }}
       with:
@@ -179,7 +179,7 @@ jobs:
       - docker
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}
@@ -200,7 +200,7 @@ jobs:
       - docker
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - uses: prantlf/unshelve-changes-action@v2
       with:
         files: ${{ needs.linux.outputs.changed-files }}

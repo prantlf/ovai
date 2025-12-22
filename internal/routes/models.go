@@ -3,6 +3,7 @@ package routes
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/prantlf/ovai/internal/log"
 )
@@ -22,10 +23,16 @@ type modelsOutput struct {
 func convertModelsToOpenAI(models []modelInfo) []openaiModel {
 	var data []openaiModel
 	for _, m := range models {
+		var created int64 = 0
+		if m.ModifiedAt != "" {
+			if t, err := time.Parse(time.RFC3339, m.ModifiedAt); err == nil {
+				created = t.Unix()
+			}
+		}
 		data = append(data, openaiModel{
 			ID:      m.Name,
 			Object:  "model",
-			Created: 0,
+			Created: created,
 			OwnedBy: "ovai",
 		})
 	}
